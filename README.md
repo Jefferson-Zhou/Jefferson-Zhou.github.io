@@ -1,10 +1,16 @@
 # Jefferson Zhou — academic profile
 
-A restrained, bilingual one-page personal site intended for PhD applications.
+A restrained, bilingual personal site intended for PhD applications and research writing.
+
+## Site structure
+
+- `index.html` — blog home with featured notes, topic filters, and the complete writing feed.
+- `about.html` — academic profile with research interests, education, experience, projects, publications, and contact details.
+- `styles.css` and `main.js` — shared design, responsive navigation, language switching, and blog filtering.
 
 ## Before publishing
 
-Edit `index.html` and replace every item marked `Sample`, along with every instruction in brackets (`[ ... ]`), with verified information. In particular:
+Edit `index.html` and `about.html`, replacing every item marked `Sample` and every instruction in brackets (`[ ... ]`) with verified information. In particular:
 
 1. Update the PhD intake year and location.
 2. Replace the education and experience timeline.

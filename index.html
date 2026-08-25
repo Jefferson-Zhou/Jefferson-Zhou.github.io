@@ -3,408 +3,137 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta
-      name="description"
-      content="Jefferson Zhou — research interests, selected work, experience, and writing."
-    />
+    <meta name="description" content="Jefferson Zhou writes about systems, performance, observability, and research practice." />
     <meta name="theme-color" content="#f5f2ea" />
-    <title>Jefferson Zhou — Academic Profile</title>
+    <title>Writing — Jefferson Zhou</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&amp;family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&amp;display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&amp;family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&amp;display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="styles.css" />
     <script src="main.js" defer></script>
   </head>
-  <body>
+  <body data-page="home">
     <a class="skip-link" href="#main">Skip to content</a>
 
     <header class="site-header">
       <div class="shell header-inner">
-        <a class="wordmark" href="#top" aria-label="Jefferson Zhou, home">
+        <a class="wordmark" href="index.html" aria-label="Jefferson Zhou, home">
           <span class="wordmark-mark" aria-hidden="true">JZ</span>
           <span>Jefferson Zhou</span>
         </a>
-
-        <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
-          Menu
-        </button>
-
+        <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav" data-en="Menu" data-zh="菜单">Menu</button>
         <nav id="site-nav" class="site-nav" aria-label="Primary navigation">
-          <a href="#research" data-en="Research" data-zh="研究方向">Research</a>
-          <a href="#experience" data-en="Experience" data-zh="经历">Experience</a>
-          <a href="#work" data-en="Selected work" data-zh="代表工作">Selected work</a>
-          <a href="#writing" data-en="Writing" data-zh="写作">Writing</a>
-          <a href="#contact" data-en="Contact" data-zh="联系">Contact</a>
+          <a href="index.html" aria-current="page" data-en="Home" data-zh="首页">Home</a>
+          <a href="about.html" data-en="About" data-zh="关于">About</a>
         </nav>
-
         <button class="language-toggle" type="button" aria-label="切换为中文">中文</button>
       </div>
     </header>
 
     <main id="main">
-      <section id="top" class="hero shell" aria-labelledby="hero-title">
-        <div class="hero-copy">
-          <p class="eyebrow" data-en="Prospective PhD applicant · Sample profile" data-zh="博士申请主页 · 示例内容">
-            Prospective PhD applicant · Sample profile
-          </p>
-          <h1 id="hero-title">
-            <span data-en="I study how reliable systems" data-zh="我关注如何让复杂系统">I study how reliable systems</span>
-            <em data-en="work in the real world." data-zh="在真实世界中可靠运行。">work in the real world.</em>
+      <section id="top" class="home-intro shell" aria-labelledby="home-title">
+        <div>
+          <p class="eyebrow" data-en="A working notebook on systems" data-zh="关于系统研究的持续笔记">A working notebook on systems</p>
+          <h1 id="home-title">
+            <span data-en="Notes on systems, research," data-zh="记录系统、研究，">Notes on systems, research,</span>
+            <em data-en="and the work behind them." data-zh="以及它们背后的工作。">and the work behind them.</em>
           </h1>
-          <p
-            class="hero-summary"
-            data-en="I am Jefferson Zhou, an engineer and emerging researcher interested in distributed systems, performance, and observability. I enjoy turning practical engineering problems into clear, testable research questions."
-            data-zh="我是 Jefferson Zhou，一名工程师与研究新人，关注分布式系统、性能和可观测性。我希望把真实的工程问题转化为清晰、可验证的研究问题。"
-          >
-            I am Jefferson Zhou, an engineer and emerging researcher interested in distributed systems,
-            performance, and observability. I enjoy turning practical engineering problems into clear,
-            testable research questions.
+          <p class="home-deck"
+             data-en="I write about distributed systems, performance, observability, and the practical work of turning an engineering question into a reproducible result."
+             data-zh="我在这里记录分布式系统、性能、可观测性，以及如何把工程问题转化为可复现研究结果的实践。">
+            I write about distributed systems, performance, observability, and the practical work of turning an engineering question into a reproducible result.
           </p>
-
-          <div class="hero-actions">
-            <a class="text-link primary-link" href="#work" data-en="View selected work ↓" data-zh="查看代表工作 ↓">
-              View selected work ↓
-            </a>
-            <a class="text-link" href="https://github.com/Jefferson-Zhou" target="_blank" rel="noreferrer">
-              GitHub ↗
-            </a>
-            <span class="text-link muted-link" data-en="CV [add PDF]" data-zh="个人简历 [添加 PDF]">CV [add PDF]</span>
-          </div>
         </div>
-
-        <aside class="profile-card" aria-label="Profile summary">
-          <div class="portrait-placeholder" aria-label="Portrait placeholder">
-            <span>JZ</span>
-          </div>
-          <dl>
-            <div>
-              <dt data-en="Based in" data-zh="所在地">Based in</dt>
-              <dd data-en="Shanghai, China · sample" data-zh="中国上海 · 示例">Shanghai, China · sample</dd>
-            </div>
-            <div>
-              <dt data-en="Research" data-zh="研究兴趣">Research</dt>
-              <dd data-en="Systems · Performance · Observability" data-zh="系统 · 性能 · 可观测性">
-                Systems · Performance · Observability
-              </dd>
-            </div>
-            <div>
-              <dt data-en="Seeking" data-zh="申请目标">Seeking</dt>
-              <dd data-en="PhD opportunities · 2027 sample" data-zh="博士机会 · 2027 示例">PhD opportunities · 2027 sample</dd>
-            </div>
-          </dl>
+        <aside class="home-note">
+          <p class="home-note-label" data-en="About the author" data-zh="关于作者">About the author</p>
+          <p data-en="I’m Jefferson, an engineer and emerging researcher interested in reliable systems and causal diagnosis. This site is both a blog and a compact record of my research path."
+             data-zh="我是 Jefferson，一名关注可靠系统与因果诊断的工程师和研究新人。这个网站既是博客，也是我的研究成长记录。">
+            I’m Jefferson, an engineer and emerging researcher interested in reliable systems and causal diagnosis. This site is both a blog and a compact record of my research path.
+          </p>
+          <a href="about.html" data-en="Read the academic profile →" data-zh="查看学术简介 →">Read the academic profile →</a>
         </aside>
       </section>
 
-      <section id="research" class="section shell" aria-labelledby="research-title">
-        <div class="section-heading">
-          <p class="section-number">01</p>
-          <div>
-            <h2 id="research-title" data-en="Research interests" data-zh="研究兴趣">Research interests</h2>
-            <p
-              data-en="Questions I would like to investigate through doctoral study."
-              data-zh="我希望在博士阶段进一步探索的问题。"
-            >
-              Questions I would like to investigate through doctoral study.
-            </p>
-          </div>
+      <section class="home-section shell" aria-labelledby="featured-title">
+        <div class="home-section-heading">
+          <div><p class="section-number">01</p><h2 id="featured-title" data-en="Featured notes" data-zh="精选文章">Featured notes</h2></div>
+          <p data-en="Long-form explanations of questions worth unpacking." data-zh="值得展开解释的长期问题。">Long-form explanations of questions worth unpacking.</p>
         </div>
 
-        <div class="interest-grid">
-          <article class="interest-item">
-            <p class="item-index">A</p>
-            <h3 data-en="Dependable distributed systems" data-zh="可信赖的分布式系统">
-              Dependable distributed systems
-            </h3>
-            <p
-              data-en="How can services remain understandable and useful under partial failure, overload, and changing workloads?"
-              data-zh="服务如何在部分故障、过载与动态负载下仍然保持可解释、可用与可恢复？"
-            >
-              How can services remain understandable and useful under partial failure, overload, and changing
-              workloads?
+        <div class="featured-grid">
+          <article class="featured-post featured-post-main">
+            <div class="post-label-row"><span data-en="Distributed systems" data-zh="分布式系统">Distributed systems</span><span>Draft · Sample</span></div>
+            <h3 data-en="Why we eventually moved beyond two-phase commit" data-zh="为什么我们最终放弃了二阶段提交">Why we eventually moved beyond two-phase commit</h3>
+            <p data-en="Two-phase commit is elegant on a whiteboard and full of operational traps in production. A practical look at blocking windows, coordinator failure, and the design choices that follow."
+               data-zh="两阶段提交在白板上很优雅，在生产环境中却充满运维陷阱。本文从阻塞窗口、协调者故障与后续设计选择出发，给出一次实践性梳理。">
+              Two-phase commit is elegant on a whiteboard and full of operational traps in production. A practical look at blocking windows, coordinator failure, and the design choices that follow.
             </p>
+            <div class="post-footer"><span data-en="9 min read" data-zh="阅读 9 分钟">9 min read</span><span class="draft-link" data-en="Article link [add]" data-zh="文章链接 [添加]">Article link [add]</span></div>
           </article>
-          <article class="interest-item">
-            <p class="item-index">B</p>
-            <h3 data-en="Performance as a systems property" data-zh="作为系统属性的性能">
-              Performance as a systems property
-            </h3>
-            <p
-              data-en="I am interested in tail latency, resource efficiency, and the trade-offs hidden behind aggregate metrics."
-              data-zh="我关注尾延迟、资源效率，以及汇总指标背后容易被忽略的系统权衡。"
-            >
-              I am interested in tail latency, resource efficiency, and the trade-offs hidden behind aggregate
-              metrics.
-            </p>
+          <article class="featured-post">
+            <div class="post-label-row"><span data-en="Systems programming" data-zh="系统编程">Systems programming</span><span>Draft · Sample</span></div>
+            <h3 data-en="What the Go scheduler is really solving" data-zh="Go 调度器真正解决了什么">What the Go scheduler is really solving</h3>
+            <p data-en="A mental model for G, M, and P—and why work stealing matters when concurrency stops being small."
+               data-zh="理解 G、M、P 的一个心智模型，以及为什么在高并发下工作窃取如此重要。">A mental model for G, M, and P—and why work stealing matters when concurrency stops being small.</p>
+            <div class="post-footer"><span data-en="12 min read" data-zh="阅读 12 分钟">12 min read</span><span class="draft-link" data-en="Article link [add]" data-zh="文章链接 [添加]">Article link [add]</span></div>
           </article>
-          <article class="interest-item">
-            <p class="item-index">C</p>
-            <h3 data-en="Observability for diagnosis" data-zh="面向诊断的可观测性">Observability for diagnosis</h3>
-            <p
-              data-en="How can traces, profiles, and runtime signals help engineers move from symptoms to causal explanations?"
-              data-zh="如何利用追踪、性能剖析与运行时信号，帮助工程师从表面症状走向因果解释？"
-            >
-              How can traces, profiles, and runtime signals help engineers move from symptoms to causal
-              explanations?
-            </p>
+          <article class="featured-post">
+            <div class="post-label-row"><span data-en="Observability" data-zh="可观测性">Observability</span><span>Draft · Sample</span></div>
+            <h3 data-en="Diagnosing latency with low-overhead tracing" data-zh="用低开销追踪诊断延迟问题">Diagnosing latency with low-overhead tracing</h3>
+            <p data-en="From a noisy symptom to a causal hypothesis: a field note on tracing intermittent latency spikes."
+               data-zh="从模糊症状走向因果假设：一次追踪间歇性延迟尖峰的实践记录。">From a noisy symptom to a causal hypothesis: a field note on tracing intermittent latency spikes.</p>
+            <div class="post-footer"><span data-en="7 min read" data-zh="阅读 7 分钟">7 min read</span><span class="draft-link" data-en="Article link [add]" data-zh="文章链接 [添加]">Article link [add]</span></div>
           </article>
         </div>
       </section>
 
-      <section id="experience" class="section shell" aria-labelledby="experience-title">
-        <div class="section-heading">
-          <p class="section-number">02</p>
-          <div>
-            <h2 id="experience-title" data-en="Education & experience" data-zh="教育与经历">
-              Education &amp; experience
-            </h2>
-            <p
-              data-en="A concise timeline for reviewers who want the essentials first."
-              data-zh="让导师可以快速了解核心经历的简洁时间线。"
-            >
-              A concise timeline for reviewers who want the essentials first.
-            </p>
+      <section class="home-section shell" aria-labelledby="all-writing-title">
+        <div class="home-section-heading home-section-heading-filter">
+          <div><p class="section-number">02</p><h2 id="all-writing-title" data-en="All writing" data-zh="全部文章">All writing</h2></div>
+          <div class="topic-filters" role="group" aria-label="Filter posts by topic">
+            <button type="button" class="is-active" data-filter="all" data-en="All" data-zh="全部">All</button>
+            <button type="button" data-filter="systems" data-en="Systems" data-zh="系统">Systems</button>
+            <button type="button" data-filter="research" data-en="Research notes" data-zh="研究笔记">Research notes</button>
+            <button type="button" data-filter="engineering" data-en="Engineering" data-zh="工程实践">Engineering</button>
           </div>
         </div>
 
-        <!-- Replace all entries marked Sample with your verified experience. -->
-        <ol class="timeline">
-          <li>
-            <div class="timeline-meta">
-              <p class="timeline-date">2025 — Present</p>
-              <span class="sample-tag">Sample</span>
-            </div>
-            <div>
-              <h3 data-en="Research Assistant · Systems Lab" data-zh="研究助理 · 系统实验室">Research Assistant · Systems Lab</h3>
-              <p class="timeline-org" data-en="Example University" data-zh="示例大学">
-                Example University
-              </p>
-              <p
-                data-en="Studying failure diagnosis in distributed services. Built a trace-analysis prototype and designed controlled experiments to understand how overload propagates across service dependencies."
-                data-zh="研究分布式服务中的故障诊断问题。构建追踪分析原型，并通过可控实验理解过载如何沿服务依赖传播。"
-              >
-                Studying failure diagnosis in distributed services. Built a trace-analysis prototype and designed
-                controlled experiments to understand how overload propagates across service dependencies.
-              </p>
-            </div>
-          </li>
-          <li>
-            <div class="timeline-meta">
-              <p class="timeline-date">2021 — 2025</p>
-              <span class="sample-tag">Sample</span>
-            </div>
-            <div>
-              <h3 data-en="B.Eng. in Computer Science" data-zh="计算机科学与技术 工学学士">B.Eng. in Computer Science</h3>
-              <p class="timeline-org" data-en="Example Institute of Technology" data-zh="示例理工大学">
-                Example Institute of Technology
-              </p>
-              <p
-                data-en="Graduation project on resource-aware scheduling for container workloads. Coursework included operating systems, computer networks, distributed systems, and probability."
-                data-zh="毕业设计聚焦容器工作负载的资源感知调度。主要课程包括操作系统、计算机网络、分布式系统与概率论。"
-              >
-                Graduation project on resource-aware scheduling for container workloads. Coursework included
-                operating systems, computer networks, distributed systems, and probability.
-              </p>
-            </div>
-          </li>
-          <li>
-            <div class="timeline-meta">
-              <p class="timeline-date">Summer 2024</p>
-              <span class="sample-tag">Sample</span>
-            </div>
-            <div>
-              <h3 data-en="Software Engineering Intern" data-zh="软件工程实习生">Software Engineering Intern</h3>
-              <p class="timeline-org" data-en="Example Technology Company" data-zh="示例科技公司">
-                Example Technology Company
-              </p>
-              <p
-                data-en="Improved service-level tracing and investigated recurring latency spikes. The experience motivated my interest in connecting production diagnosis with systems research."
-                data-zh="改进服务级追踪并分析反复出现的延迟尖峰。这段经历促使我进一步思考如何连接生产诊断与系统研究。"
-              >
-                Improved service-level tracing and investigated recurring latency spikes. The experience motivated
-                my interest in connecting production diagnosis with systems research.
-              </p>
-            </div>
-          </li>
-        </ol>
-      </section>
-
-      <section id="work" class="section shell" aria-labelledby="work-title">
-        <div class="section-heading">
-          <p class="section-number">03</p>
-          <div>
-            <h2 id="work-title" data-en="Selected work" data-zh="代表工作">Selected work</h2>
-            <p
-              data-en="Research, engineering, and open-source work that best reflects how I think."
-              data-zh="最能体现我的研究思路、工程能力与开源实践的工作。"
-            >
-              Research, engineering, and open-source work that best reflects how I think.
-            </p>
-          </div>
-        </div>
-
-        <!-- Replace these sample summaries with 2–4 verified projects or publications. -->
-        <div class="work-list">
-          <article class="work-item">
-            <div class="work-meta">
-              <span data-en="Research project · Sample" data-zh="研究项目 · 示例">Research project · Sample</span>
-              <span>2026</span>
-            </div>
-            <div>
-              <h3 data-en="TraceScope: causal diagnosis for tail-latency incidents" data-zh="TraceScope：面向尾延迟事件的因果诊断">TraceScope: causal diagnosis for tail-latency incidents</h3>
-              <p
-                data-en="A prototype that combines distributed traces with controlled perturbations to rank likely causes of latency regressions. Evaluated on a small microservice testbed with injected CPU, network, and dependency faults."
-                data-zh="一个结合分布式追踪与可控扰动的原型，用于排序延迟退化的可能原因。在微服务测试平台上通过 CPU、网络与依赖故障注入进行评估。"
-              >
-                A prototype that combines distributed traces with controlled perturbations to rank likely causes
-                of latency regressions. Evaluated on a small microservice testbed with injected CPU, network, and
-                dependency faults.
-              </p>
-              <div class="work-links">
-                <span data-en="Paper [add link]" data-zh="论文 [添加链接]">Paper [add link]</span>
-                <span data-en="Code [add link]" data-zh="代码 [添加链接]">Code [add link]</span>
-              </div>
-            </div>
+        <div class="blog-feed" aria-live="polite">
+          <article class="blog-row" data-category="systems">
+            <div class="blog-row-meta"><span>2026 · Sample</span><span data-en="Distributed systems" data-zh="分布式系统">Distributed systems</span></div>
+            <div><h3 data-en="Why we eventually moved beyond two-phase commit" data-zh="为什么我们最终放弃了二阶段提交">Why we eventually moved beyond two-phase commit</h3><p data-en="Coordinator failure, blocking windows, and what changes when the happy path is no longer enough." data-zh="协调者故障、阻塞窗口，以及当理想路径不再足够时，系统设计需要做出的改变。">Coordinator failure, blocking windows, and what changes when the happy path is no longer enough.</p></div>
+            <span class="blog-row-time" data-en="9 min" data-zh="9 分钟">9 min</span>
           </article>
-          <article class="work-item">
-            <div class="work-meta">
-              <span data-en="Systems project · Sample" data-zh="系统项目 · 示例">Systems project · Sample</span>
-              <span>2025</span>
-            </div>
-            <div>
-              <h3 data-en="Adaptive replica placement under dynamic workloads" data-zh="动态负载下的自适应副本放置">
-                Adaptive replica placement under dynamic workloads
-              </h3>
-              <p
-                data-en="Designed a workload-aware placement policy that balances tail latency against migration cost. Compared the policy with round-robin and load-only baselines using repeatable simulation traces."
-                data-zh="设计一种兼顾尾延迟与迁移成本的负载感知放置策略，并使用可复现实验轨迹与轮询及仅负载基线进行比较。"
-              >
-                Designed a workload-aware placement policy that balances tail latency against migration cost.
-                Compared the policy with round-robin and load-only baselines using repeatable simulation traces.
-              </p>
-              <div class="work-links">
-                <span data-en="Report [add PDF]" data-zh="报告 [添加 PDF]">Report [add PDF]</span>
-                <span data-en="Code [add link]" data-zh="代码 [添加链接]">Code [add link]</span>
-              </div>
-            </div>
+          <article class="blog-row" data-category="systems engineering">
+            <div class="blog-row-meta"><span>2026 · Sample</span><span data-en="Systems programming" data-zh="系统编程">Systems programming</span></div>
+            <div><h3 data-en="What the Go scheduler is really solving" data-zh="Go 调度器真正解决了什么">What the Go scheduler is really solving</h3><p data-en="A compact explanation of the GMP model, work stealing, and the cost model behind goroutines." data-zh="简洁解释 GMP 模型、工作窃取，以及 goroutine 背后的成本模型。">A compact explanation of the GMP model, work stealing, and the cost model behind goroutines.</p></div>
+            <span class="blog-row-time" data-en="12 min" data-zh="12 分钟">12 min</span>
           </article>
-          <article class="work-item">
-            <div class="work-meta">
-              <span data-en="Open source · Sample" data-zh="开源项目 · 示例">Open source · Sample</span>
-              <span>2024</span>
-            </div>
-            <div>
-              <h3 data-en="Lightweight observability toolkit for Go services" data-zh="面向 Go 服务的轻量级可观测性工具包">
-                Lightweight observability toolkit for Go services
-              </h3>
-              <p
-                data-en="Built a small toolkit for collecting request traces, runtime profiles, and service-level indicators with minimal setup. Documented design choices and reproducible examples for new contributors."
-                data-zh="构建一个低配置成本的工具包，用于收集请求追踪、运行时性能剖析与服务级指标，并为新贡献者编写可复现示例与设计说明。"
-              >
-                Built a small toolkit for collecting request traces, runtime profiles, and service-level indicators
-                with minimal setup. Documented design choices and reproducible examples for new contributors.
-              </p>
-              <div class="work-links">
-                <span data-en="Repository [add link]" data-zh="代码仓库 [添加链接]">Repository [add link]</span>
-                <span data-en="Documentation [add link]" data-zh="文档 [添加链接]">Documentation [add link]</span>
-              </div>
-            </div>
+          <article class="blog-row" data-category="systems research">
+            <div class="blog-row-meta"><span>2026 · Sample</span><span data-en="Observability" data-zh="可观测性">Observability</span></div>
+            <div><h3 data-en="Diagnosing latency with low-overhead tracing" data-zh="用低开销追踪诊断延迟问题">Diagnosing latency with low-overhead tracing</h3><p data-en="How runtime signals, traces, and small perturbations can turn a symptom into a testable explanation." data-zh="如何利用运行时信号、追踪与小规模扰动，把症状转化为可验证的解释。">How runtime signals, traces, and small perturbations can turn a symptom into a testable explanation.</p></div>
+            <span class="blog-row-time" data-en="7 min" data-zh="7 分钟">7 min</span>
           </article>
-        </div>
-
-        <div class="publications-block">
-          <h3 data-en="Publication placeholders" data-zh="论文占位示例">Publication placeholders</h3>
-          <ol class="publication-list">
-            <li>
-              <span class="sample-tag">Sample</span>
-              <p><strong>Jefferson Zhou</strong>, Coauthor Name. “A concise paper title describing the central contribution.” <em>Venue or preprint</em>, 2026. <span class="placeholder-link">PDF · Code · BibTeX</span></p>
-            </li>
-            <li>
-              <span class="sample-tag">Sample</span>
-              <p>Coauthor Name, <strong>Jefferson Zhou</strong>. “Another paper title for a collaboration or manuscript in preparation.” <em>Manuscript in preparation</em>, 2025.</p>
-            </li>
-          </ol>
-        </div>
-      </section>
-
-      <section id="writing" class="section shell" aria-labelledby="writing-title">
-        <div class="section-heading">
-          <p class="section-number">04</p>
-          <div>
-            <h2 id="writing-title" data-en="Notes & writing" data-zh="笔记与写作">Notes &amp; writing</h2>
-            <p
-              data-en="Short notes on systems, research practice, and lessons from building."
-              data-zh="关于系统、研究实践与工程经验的简短记录。"
-            >
-              Short notes on systems, research practice, and lessons from building.
-            </p>
-          </div>
-        </div>
-
-        <div class="writing-list">
-          <article>
-            <p class="article-date">Draft · Sample</p>
-            <h3>
-              <span class="article-title" data-en="Why we eventually moved beyond two-phase commit" data-zh="为什么我们最终放弃了二阶段提交">
-                Why we eventually moved beyond two-phase commit
-              </span>
-            </h3>
-            <p data-en="Distributed systems · 9 min read" data-zh="分布式系统 · 阅读 9 分钟">
-              Distributed systems · 9 min read
-            </p>
+          <article class="blog-row" data-category="research">
+            <div class="blog-row-meta"><span>2026 · Sample</span><span data-en="Research notes" data-zh="研究笔记">Research notes</span></div>
+            <div><h3 data-en="From an engineering incident to a research question" data-zh="如何把一次工程故障转化为研究问题">From an engineering incident to a research question</h3><p data-en="A practical framework for separating anecdotes from hypotheses, variables, and reproducible evidence." data-zh="一个用于把工程现象拆分为假设、变量与可复现证据的实践框架。">A practical framework for separating anecdotes from hypotheses, variables, and reproducible evidence.</p></div>
+            <span class="blog-row-time" data-en="6 min" data-zh="6 分钟">6 min</span>
           </article>
-          <article>
-            <p class="article-date">Draft · Sample</p>
-            <h3>
-              <span class="article-title" data-en="What the Go scheduler is really solving" data-zh="Go 调度器真正解决了什么">
-                What the Go scheduler is really solving
-              </span>
-            </h3>
-            <p data-en="Systems programming · 12 min read" data-zh="系统编程 · 阅读 12 分钟">
-              Systems programming · 12 min read
-            </p>
-          </article>
-          <article>
-            <p class="article-date">Draft · Sample</p>
-            <h3>
-              <span class="article-title" data-en="Diagnosing latency with low-overhead tracing" data-zh="用低开销追踪诊断延迟问题">
-                Diagnosing latency with low-overhead tracing
-              </span>
-            </h3>
-            <p data-en="Observability · 7 min read" data-zh="可观测性 · 阅读 7 分钟">
-              Observability · 7 min read
-            </p>
+          <article class="blog-row" data-category="engineering">
+            <div class="blog-row-meta"><span>2025 · Sample</span><span data-en="Engineering practice" data-zh="工程实践">Engineering practice</span></div>
+            <div><h3 data-en="What a useful performance experiment should record" data-zh="一个有用的性能实验应该记录什么">What a useful performance experiment should record</h3><p data-en="Workload definition, warm-up, variance, machine state, and the details that determine whether a result can be trusted." data-zh="工作负载、预热、方差、机器状态，以及决定结果能否被信任的那些细节。">Workload definition, warm-up, variance, machine state, and the details that determine whether a result can be trusted.</p></div>
+            <span class="blog-row-time" data-en="8 min" data-zh="8 分钟">8 min</span>
           </article>
         </div>
       </section>
     </main>
 
-    <footer id="contact" class="site-footer">
+    <footer class="site-footer home-footer">
       <div class="shell footer-grid">
-        <div>
-          <p class="eyebrow" data-en="Let’s talk research" data-zh="欢迎交流研究">Let’s talk research</p>
-          <h2 data-en="I am open to PhD opportunities and research collaborations."
-              data-zh="我正在寻找博士机会，也欢迎研究合作。">
-            I am open to PhD opportunities and research collaborations.
-          </h2>
-        </div>
-        <div class="contact-links">
-          <!-- Add your preferred academic email before publishing. -->
-          <span class="placeholder-link">your.name@university.edu · sample</span>
-          <a href="https://github.com/Jefferson-Zhou" target="_blank" rel="noreferrer">GitHub ↗</a>
-          <span class="placeholder-link" data-en="Google Scholar [add profile]" data-zh="Google Scholar [添加主页]">Google Scholar [add profile]</span>
-          <span class="placeholder-link" data-en="ORCID [add profile]" data-zh="ORCID [添加主页]">ORCID [add profile]</span>
-          <a href="#top" data-en="Back to top ↑" data-zh="返回顶部 ↑">Back to top ↑</a>
-        </div>
+        <div><p class="eyebrow" data-en="More than a blog" data-zh="不只是博客">More than a blog</p><h2 data-en="See the research interests and experience behind the writing." data-zh="了解这些写作背后的研究兴趣与个人经历。">See the research interests and experience behind the writing.</h2></div>
+        <div class="contact-links"><a href="about.html" data-en="About & academic profile →" data-zh="关于与学术简介 →">About &amp; academic profile →</a><a href="https://github.com/Jefferson-Zhou" target="_blank" rel="noreferrer">GitHub ↗</a><a href="#top" data-en="Back to top ↑" data-zh="返回顶部 ↑">Back to top ↑</a></div>
       </div>
-      <div class="shell footer-note">
-        <span>© <span id="year"></span> Jefferson Zhou</span>
-        <span data-en="Built as a quiet place for serious work." data-zh="一个安静记录认真工作的地方。">
-          Built as a quiet place for serious work.
-        </span>
-      </div>
+      <div class="shell footer-note"><span>© <span id="year"></span> Jefferson Zhou</span><span data-en="Built as a quiet place for serious work." data-zh="一个安静记录认真工作的地方。">Built as a quiet place for serious work.</span></div>
     </footer>
   </body>
 </html>
