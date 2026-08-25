@@ -47,8 +47,8 @@
     <main id="main">
       <section id="top" class="hero shell" aria-labelledby="hero-title">
         <div class="hero-copy">
-          <p class="eyebrow" data-en="Prospective PhD applicant · 2027" data-zh="博士申请者 · 2027">
-            Prospective PhD applicant · 2027
+          <p class="eyebrow" data-en="Prospective PhD applicant · Sample profile" data-zh="博士申请主页 · 示例内容">
+            Prospective PhD applicant · Sample profile
           </p>
           <h1 id="hero-title">
             <span data-en="I study how reliable systems" data-zh="我关注如何让复杂系统">I study how reliable systems</span>
@@ -71,6 +71,7 @@
             <a class="text-link" href="https://github.com/Jefferson-Zhou" target="_blank" rel="noreferrer">
               GitHub ↗
             </a>
+            <span class="text-link muted-link" data-en="CV [add PDF]" data-zh="个人简历 [添加 PDF]">CV [add PDF]</span>
           </div>
         </div>
 
@@ -81,7 +82,7 @@
           <dl>
             <div>
               <dt data-en="Based in" data-zh="所在地">Based in</dt>
-              <dd data-en="China · open to relocation" data-zh="中国 · 可接受异地">China · open to relocation</dd>
+              <dd data-en="Shanghai, China · sample" data-zh="中国上海 · 示例">Shanghai, China · sample</dd>
             </div>
             <div>
               <dt data-en="Research" data-zh="研究兴趣">Research</dt>
@@ -91,7 +92,7 @@
             </div>
             <div>
               <dt data-en="Seeking" data-zh="申请目标">Seeking</dt>
-              <dd data-en="PhD opportunities for 2027" data-zh="2027 年博士机会">PhD opportunities for 2027</dd>
+              <dd data-en="PhD opportunities · 2027 sample" data-zh="博士机会 · 2027 示例">PhD opportunities · 2027 sample</dd>
             </div>
           </dl>
         </aside>
@@ -168,37 +169,62 @@
           </div>
         </div>
 
-        <!-- Replace the bracketed content below with your verified experience. -->
+        <!-- Replace all entries marked Sample with your verified experience. -->
         <ol class="timeline">
           <li>
-            <p class="timeline-date">20XX — Present</p>
+            <div class="timeline-meta">
+              <p class="timeline-date">2025 — Present</p>
+              <span class="sample-tag">Sample</span>
+            </div>
             <div>
-              <h3 data-en="[Current role or degree]" data-zh="[目前职位或学位]">[Current role or degree]</h3>
-              <p class="timeline-org" data-en="[Institution or organisation]" data-zh="[学校或机构]">
-                [Institution or organisation]
+              <h3 data-en="Research Assistant · Systems Lab" data-zh="研究助理 · 系统实验室">Research Assistant · Systems Lab</h3>
+              <p class="timeline-org" data-en="Example University" data-zh="示例大学">
+                Example University
               </p>
               <p
-                data-en="Add one or two sentences about your research, thesis, or most relevant responsibility. Focus on the problem, your contribution, and the outcome."
-                data-zh="用一到两句话介绍最相关的研究、毕业论文或职责，重点说明问题、你的贡献与结果。"
+                data-en="Studying failure diagnosis in distributed services. Built a trace-analysis prototype and designed controlled experiments to understand how overload propagates across service dependencies."
+                data-zh="研究分布式服务中的故障诊断问题。构建追踪分析原型，并通过可控实验理解过载如何沿服务依赖传播。"
               >
-                Add one or two sentences about your research, thesis, or most relevant responsibility. Focus on
-                the problem, your contribution, and the outcome.
+                Studying failure diagnosis in distributed services. Built a trace-analysis prototype and designed
+                controlled experiments to understand how overload propagates across service dependencies.
               </p>
             </div>
           </li>
           <li>
-            <p class="timeline-date">20XX — 20XX</p>
+            <div class="timeline-meta">
+              <p class="timeline-date">2021 — 2025</p>
+              <span class="sample-tag">Sample</span>
+            </div>
             <div>
-              <h3 data-en="[Previous role or degree]" data-zh="[上一段职位或学位]">[Previous role or degree]</h3>
-              <p class="timeline-org" data-en="[Institution or organisation]" data-zh="[学校或机构]">
-                [Institution or organisation]
+              <h3 data-en="B.Eng. in Computer Science" data-zh="计算机科学与技术 工学学士">B.Eng. in Computer Science</h3>
+              <p class="timeline-org" data-en="Example Institute of Technology" data-zh="示例理工大学">
+                Example Institute of Technology
               </p>
               <p
-                data-en="Include only evidence that strengthens your research story: methods learned, systems built, or measurable impact."
-                data-zh="只保留能够强化研究叙事的信息，例如掌握的方法、构建的系统或可衡量的影响。"
+                data-en="Graduation project on resource-aware scheduling for container workloads. Coursework included operating systems, computer networks, distributed systems, and probability."
+                data-zh="毕业设计聚焦容器工作负载的资源感知调度。主要课程包括操作系统、计算机网络、分布式系统与概率论。"
               >
-                Include only evidence that strengthens your research story: methods learned, systems built, or
-                measurable impact.
+                Graduation project on resource-aware scheduling for container workloads. Coursework included
+                operating systems, computer networks, distributed systems, and probability.
+              </p>
+            </div>
+          </li>
+          <li>
+            <div class="timeline-meta">
+              <p class="timeline-date">Summer 2024</p>
+              <span class="sample-tag">Sample</span>
+            </div>
+            <div>
+              <h3 data-en="Software Engineering Intern" data-zh="软件工程实习生">Software Engineering Intern</h3>
+              <p class="timeline-org" data-en="Example Technology Company" data-zh="示例科技公司">
+                Example Technology Company
+              </p>
+              <p
+                data-en="Improved service-level tracing and investigated recurring latency spikes. The experience motivated my interest in connecting production diagnosis with systems research."
+                data-zh="改进服务级追踪并分析反复出现的延迟尖峰。这段经历促使我进一步思考如何连接生产诊断与系统研究。"
+              >
+                Improved service-level tracing and investigated recurring latency spikes. The experience motivated
+                my interest in connecting production diagnosis with systems research.
               </p>
             </div>
           </li>
@@ -223,46 +249,83 @@
         <div class="work-list">
           <article class="work-item">
             <div class="work-meta">
-              <span data-en="Research project" data-zh="研究项目">Research project</span>
-              <span>20XX</span>
+              <span data-en="Research project · Sample" data-zh="研究项目 · 示例">Research project · Sample</span>
+              <span>2026</span>
             </div>
             <div>
-              <h3 data-en="[Project or paper title]" data-zh="[项目或论文题目]">[Project or paper title]</h3>
+              <h3 data-en="TraceScope: causal diagnosis for tail-latency incidents" data-zh="TraceScope：面向尾延迟事件的因果诊断">TraceScope: causal diagnosis for tail-latency incidents</h3>
               <p
-                data-en="Describe the research question, your method, and the strongest result in two short sentences. Avoid listing tools without explaining why they mattered."
-                data-zh="用两句简短的话说明研究问题、方法与最重要的结果。不要只罗列工具，应说明它们为何重要。"
+                data-en="A prototype that combines distributed traces with controlled perturbations to rank likely causes of latency regressions. Evaluated on a small microservice testbed with injected CPU, network, and dependency faults."
+                data-zh="一个结合分布式追踪与可控扰动的原型，用于排序延迟退化的可能原因。在微服务测试平台上通过 CPU、网络与依赖故障注入进行评估。"
               >
-                Describe the research question, your method, and the strongest result in two short sentences.
-                Avoid listing tools without explaining why they mattered.
+                A prototype that combines distributed traces with controlled perturbations to rank likely causes
+                of latency regressions. Evaluated on a small microservice testbed with injected CPU, network, and
+                dependency faults.
               </p>
               <div class="work-links">
-                <a href="#contact" data-en="Project details →" data-zh="项目详情 →">Project details →</a>
-                <a href="https://github.com/Jefferson-Zhou" target="_blank" rel="noreferrer">Code ↗</a>
+                <span data-en="Paper [add link]" data-zh="论文 [添加链接]">Paper [add link]</span>
+                <span data-en="Code [add link]" data-zh="代码 [添加链接]">Code [add link]</span>
               </div>
             </div>
           </article>
           <article class="work-item">
             <div class="work-meta">
-              <span data-en="Systems project" data-zh="系统项目">Systems project</span>
-              <span>20XX</span>
+              <span data-en="Systems project · Sample" data-zh="系统项目 · 示例">Systems project · Sample</span>
+              <span>2025</span>
             </div>
             <div>
-              <h3 data-en="[System or open-source project]" data-zh="[系统或开源项目]">
-                [System or open-source project]
+              <h3 data-en="Adaptive replica placement under dynamic workloads" data-zh="动态负载下的自适应副本放置">
+                Adaptive replica placement under dynamic workloads
               </h3>
               <p
-                data-en="Explain the constraint you faced, the design decision you made, and any measured improvement or lesson that followed."
-                data-zh="说明你面对的约束、做出的设计选择，以及最终得到的可衡量提升或经验。"
+                data-en="Designed a workload-aware placement policy that balances tail latency against migration cost. Compared the policy with round-robin and load-only baselines using repeatable simulation traces."
+                data-zh="设计一种兼顾尾延迟与迁移成本的负载感知放置策略，并使用可复现实验轨迹与轮询及仅负载基线进行比较。"
               >
-                Explain the constraint you faced, the design decision you made, and any measured improvement or
-                lesson that followed.
+                Designed a workload-aware placement policy that balances tail latency against migration cost.
+                Compared the policy with round-robin and load-only baselines using repeatable simulation traces.
               </p>
               <div class="work-links">
-                <a href="#contact" data-en="Project details →" data-zh="项目详情 →">Project details →</a>
-                <a href="https://github.com/Jefferson-Zhou" target="_blank" rel="noreferrer">Code ↗</a>
+                <span data-en="Report [add PDF]" data-zh="报告 [添加 PDF]">Report [add PDF]</span>
+                <span data-en="Code [add link]" data-zh="代码 [添加链接]">Code [add link]</span>
               </div>
             </div>
           </article>
+          <article class="work-item">
+            <div class="work-meta">
+              <span data-en="Open source · Sample" data-zh="开源项目 · 示例">Open source · Sample</span>
+              <span>2024</span>
+            </div>
+            <div>
+              <h3 data-en="Lightweight observability toolkit for Go services" data-zh="面向 Go 服务的轻量级可观测性工具包">
+                Lightweight observability toolkit for Go services
+              </h3>
+              <p
+                data-en="Built a small toolkit for collecting request traces, runtime profiles, and service-level indicators with minimal setup. Documented design choices and reproducible examples for new contributors."
+                data-zh="构建一个低配置成本的工具包，用于收集请求追踪、运行时性能剖析与服务级指标，并为新贡献者编写可复现示例与设计说明。"
+              >
+                Built a small toolkit for collecting request traces, runtime profiles, and service-level indicators
+                with minimal setup. Documented design choices and reproducible examples for new contributors.
+              </p>
+              <div class="work-links">
+                <span data-en="Repository [add link]" data-zh="代码仓库 [添加链接]">Repository [add link]</span>
+                <span data-en="Documentation [add link]" data-zh="文档 [添加链接]">Documentation [add link]</span>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <div class="publications-block">
+          <h3 data-en="Publication placeholders" data-zh="论文占位示例">Publication placeholders</h3>
+          <ol class="publication-list">
+            <li>
+              <span class="sample-tag">Sample</span>
+              <p><strong>Jefferson Zhou</strong>, Coauthor Name. “A concise paper title describing the central contribution.” <em>Venue or preprint</em>, 2026. <span class="placeholder-link">PDF · Code · BibTeX</span></p>
+            </li>
+            <li>
+              <span class="sample-tag">Sample</span>
+              <p>Coauthor Name, <strong>Jefferson Zhou</strong>. “Another paper title for a collaboration or manuscript in preparation.” <em>Manuscript in preparation</em>, 2025.</p>
+            </li>
+          </ol>
         </div>
       </section>
 
@@ -282,7 +345,7 @@
 
         <div class="writing-list">
           <article>
-            <p class="article-date">18 May 2026</p>
+            <p class="article-date">Draft · Sample</p>
             <h3>
               <span class="article-title" data-en="Why we eventually moved beyond two-phase commit" data-zh="为什么我们最终放弃了二阶段提交">
                 Why we eventually moved beyond two-phase commit
@@ -293,7 +356,7 @@
             </p>
           </article>
           <article>
-            <p class="article-date">30 Apr 2026</p>
+            <p class="article-date">Draft · Sample</p>
             <h3>
               <span class="article-title" data-en="What the Go scheduler is really solving" data-zh="Go 调度器真正解决了什么">
                 What the Go scheduler is really solving
@@ -304,7 +367,7 @@
             </p>
           </article>
           <article>
-            <p class="article-date">12 Apr 2026</p>
+            <p class="article-date">Draft · Sample</p>
             <h3>
               <span class="article-title" data-en="Diagnosing latency with low-overhead tracing" data-zh="用低开销追踪诊断延迟问题">
                 Diagnosing latency with low-overhead tracing
@@ -329,7 +392,10 @@
         </div>
         <div class="contact-links">
           <!-- Add your preferred academic email before publishing. -->
+          <span class="placeholder-link">your.name@university.edu · sample</span>
           <a href="https://github.com/Jefferson-Zhou" target="_blank" rel="noreferrer">GitHub ↗</a>
+          <span class="placeholder-link" data-en="Google Scholar [add profile]" data-zh="Google Scholar [添加主页]">Google Scholar [add profile]</span>
+          <span class="placeholder-link" data-en="ORCID [add profile]" data-zh="ORCID [添加主页]">ORCID [add profile]</span>
           <a href="#top" data-en="Back to top ↑" data-zh="返回顶部 ↑">Back to top ↑</a>
         </div>
       </div>

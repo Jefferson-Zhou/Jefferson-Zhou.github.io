@@ -4,7 +4,7 @@ A restrained, bilingual one-page personal site intended for PhD applications.
 
 ## Before publishing
 
-Edit `index.html` and replace every bracketed placeholder (`[ ... ]`) with verified information. In particular:
+Edit `index.html` and replace every item marked `Sample`, along with every instruction in brackets (`[ ... ]`), with verified information. In particular:
 
 1. Update the PhD intake year and location.
 2. Replace the education and experience timeline.

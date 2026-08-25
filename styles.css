@@ -207,9 +207,15 @@ a {
 
 .text-link,
 .work-links a,
+.work-links span,
 .contact-links a {
   font-family: var(--mono);
   font-size: 13px;
+}
+
+.muted-link,
+.placeholder-link {
+  color: var(--muted);
 }
 
 .primary-link {
@@ -350,6 +356,25 @@ a {
   color: var(--muted);
 }
 
+.timeline-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.sample-tag {
+  display: inline-block;
+  padding: 2px 6px;
+  background: var(--paper-deep);
+  color: var(--accent-dark);
+  font-family: var(--mono);
+  font-size: 9px;
+  line-height: 1.5;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 .timeline h3 {
   margin: -5px 0 2px;
   font-size: 24px;
@@ -401,6 +426,42 @@ a {
   display: flex;
   gap: 22px;
   margin-top: 20px;
+}
+
+.work-links span {
+  color: var(--muted);
+}
+
+.publications-block {
+  margin: 68px 0 0 114px;
+}
+
+.publications-block > h3 {
+  margin: 0 0 20px;
+  font-size: 25px;
+  font-weight: 600;
+}
+
+.publication-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--ink);
+}
+
+.publication-list li {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr);
+  gap: 26px;
+  align-items: start;
+  padding: 24px 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.publication-list p {
+  max-width: 850px;
+  margin: 0;
+  font-size: 16px;
 }
 
 .writing-list {
@@ -468,6 +529,12 @@ a {
 
 .contact-links a {
   color: var(--paper);
+}
+
+.contact-links .placeholder-link {
+  color: rgba(245, 242, 234, 0.55);
+  font-family: var(--mono);
+  font-size: 12px;
 }
 
 .footer-note {
@@ -610,8 +677,14 @@ a {
 
   .timeline,
   .work-list,
-  .writing-list {
+  .writing-list,
+  .publications-block {
     margin-left: 0;
+  }
+
+  .publication-list li {
+    grid-template-columns: 54px minmax(0, 1fr);
+    gap: 14px;
   }
 
   .timeline li,
