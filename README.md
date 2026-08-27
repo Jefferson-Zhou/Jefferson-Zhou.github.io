@@ -6,6 +6,7 @@ A restrained, bilingual personal site intended for PhD applications and research
 
 - `index.html` — blog home with featured notes, topic filters, and the complete writing feed.
 - `about.html` — academic profile with research interests, education, experience, projects, publications, and contact details.
+- `article.html` — reusable long-form article layout with reading progress, rich content components, and an interactive outline popover.
 - `styles.css` and `main.js` — shared design, responsive navigation, language switching, and blog filtering.
 
 ## Before publishing

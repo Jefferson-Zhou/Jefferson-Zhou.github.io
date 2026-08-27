@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Why we eventually moved beyond two-phase commit — a sample long-form article by Jefferson Zhou." />
+    <meta name="theme-color" content="#f5f2ea" />
+    <title>Why we moved beyond two-phase commit — Jefferson Zhou</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&amp;family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&amp;display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="main.js" defer></script>
+  </head>
+  <body data-page="article">
+    <div id="reading-progress" aria-hidden="true"></div>
+    <a class="skip-link" href="#article-content">Skip to article</a>
+
+    <header class="site-header">
+      <div class="shell header-inner">
+        <a class="wordmark" href="index.html" aria-label="Jefferson Zhou, home">
+          <span class="wordmark-mark" aria-hidden="true">JZ</span>
+          <span>Jefferson Zhou</span>
+        </a>
+        <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav" data-en="Menu" data-zh="菜单">Menu</button>
+        <nav id="site-nav" class="site-nav" aria-label="Primary navigation">
+          <a href="index.html" data-en="Home" data-zh="首页">Home</a>
+          <a href="about.html" data-en="About" data-zh="关于">About</a>
+        </nav>
+        <button class="language-toggle" type="button" aria-label="切换为中文">中文</button>
+      </div>
+    </header>
+
+    <main>
+      <article class="article-page">
+        <header class="article-header shell">
+          <nav class="article-breadcrumb" aria-label="Breadcrumb">
+            <a href="index.html" data-en="Writing" data-zh="写作">Writing</a>
+            <span aria-hidden="true">/</span>
+            <span data-en="Distributed systems" data-zh="分布式系统">Distributed systems</span>
+          </nav>
+
+          <p class="eyebrow" data-en="Draft · Sample article" data-zh="草稿 · 示例文章">Draft · Sample article</p>
+          <h1 data-en="Why we eventually moved beyond two-phase commit" data-zh="为什么我们最终不再使用两阶段提交">
+            Why we eventually moved beyond two-phase commit
+          </h1>
+          <p class="article-subtitle"
+             data-en="A practical look at blocking windows, coordinator failure, and the design choices that follow when atomicity is no longer the only thing that matters."
+             data-zh="从阻塞窗口、协调者故障出发，讨论当原子性不再是唯一目标时，系统设计会发生怎样的变化。">
+            A practical look at blocking windows, coordinator failure, and the design choices that follow when atomicity is no longer the only thing that matters.
+          </p>
+
+          <div class="article-byline">
+            <div class="author-mark" aria-hidden="true">JZ</div>
+            <div>
+              <strong>Jefferson Zhou</strong>
+              <span data-en="Aug 2026 · 9 min read" data-zh="2026 年 8 月 · 阅读 9 分钟">Aug 2026 · 9 min read</span>
+            </div>
+            <span class="article-status" data-en="Sample content" data-zh="示例内容">Sample content</span>
+          </div>
+        </header>
+
+        <div id="article-content" class="article-content">
+          <p class="article-lead"
+             data-en="Distributed transactions are easy to admire in diagrams. The difficult part begins when a coordinator disappears, a participant slows down, and the system must explain what happened to the people operating it."
+             data-zh="分布式事务在架构图中很容易显得优雅。真正困难的部分始于协调者消失、参与者变慢，以及系统必须向运维人员解释究竟发生了什么的时候。">
+            Distributed transactions are easy to admire in diagrams. The difficult part begins when a coordinator disappears, a participant slows down, and the system must explain what happened to the people operating it.
+          </p>
+
+          <p data-en="This sample article is written to demonstrate the final reading experience. The scenario, system, and evaluation details are illustrative rather than claims about a real production deployment."
+             data-zh="这篇示例文章用于展示最终的长文阅读体验。文中的场景、系统与评估细节均为说明性内容，并不代表真实生产部署中的结论。">
+            This sample article is written to demonstrate the final reading experience. The scenario, system, and evaluation details are illustrative rather than claims about a real production deployment.
+          </p>
+
+          <section aria-labelledby="promise-of-atomicity">
+            <h2 id="promise-of-atomicity" data-outline data-en="The promise of atomicity" data-zh="原子性的承诺">The promise of atomicity</h2>
+            <p data-en="Two-phase commit gives application developers a powerful abstraction: a group of changes either becomes visible together or does not become visible at all. That promise removes a large class of intermediate states from normal application logic."
+               data-zh="两阶段提交为应用开发者提供了一个强大的抽象：一组变更要么同时可见，要么完全不可见。这一承诺让常规业务逻辑不必处理大量中间状态。">
+              Two-phase commit gives application developers a powerful abstraction: a group of changes either becomes visible together or does not become visible at all. That promise removes a large class of intermediate states from normal application logic.
+            </p>
+            <p data-en="But the abstraction is not free. The protocol moves uncertainty out of application code and into coordination, locks, logs, and recovery procedures. The complexity still exists; it has simply changed owners."
+               data-zh="但这个抽象并非没有成本。协议只是把不确定性从应用代码转移到了协调、锁、日志与恢复流程中。复杂度仍然存在，只是换了负责人。">
+              But the abstraction is not free. The protocol moves uncertainty out of application code and into coordination, locks, logs, and recovery procedures. The complexity still exists; it has simply changed owners.
+            </p>
+
+            <aside class="article-note">
+              <span data-en="Working principle" data-zh="思考原则">Working principle</span>
+              <p data-en="Whenever an abstraction removes a state from the application, ask where that state is now represented—and who has to recover it."
+                 data-zh="当一个抽象从应用中消除某种状态时，应继续追问：这个状态现在被表示在哪里，又由谁负责恢复？">
+                Whenever an abstraction removes a state from the application, ask where that state is now represented—and who has to recover it.
+              </p>
+            </aside>
+          </section>
+
+          <section aria-labelledby="where-blocking-appears">
+            <h2 id="where-blocking-appears" data-outline data-en="Where blocking appears" data-zh="阻塞出现在哪里">Where blocking appears</h2>
+            <p data-en="During the prepare phase, participants promise that they can commit later. Between that promise and the final decision, they may need to retain locks or other resources. If the decision is delayed, useful work begins to queue behind protocol state."
+               data-zh="在准备阶段，参与者承诺自己稍后能够提交。从作出承诺到收到最终决策之间，它们可能需要保留锁或其他资源。如果决策迟迟不到，有效工作就会开始排在协议状态之后。">
+              During the prepare phase, participants promise that they can commit later. Between that promise and the final decision, they may need to retain locks or other resources. If the decision is delayed, useful work begins to queue behind protocol state.
+            </p>
+
+            <figure class="protocol-figure">
+              <div class="protocol-flow" aria-label="Two-phase commit flow">
+                <div><small>01</small><strong data-en="Prepare" data-zh="准备">Prepare</strong><span data-en="Can every participant commit?" data-zh="所有参与者都能提交吗？">Can every participant commit?</span></div>
+                <span class="protocol-arrow" aria-hidden="true">→</span>
+                <div><small>02</small><strong data-en="Uncertain" data-zh="不确定">Uncertain</strong><span data-en="Resources remain reserved" data-zh="资源仍被保留">Resources remain reserved</span></div>
+                <span class="protocol-arrow" aria-hidden="true">→</span>
+                <div><small>03</small><strong data-en="Decide" data-zh="决策">Decide</strong><span data-en="Commit or abort" data-zh="提交或中止">Commit or abort</span></div>
+              </div>
+              <figcaption data-en="The uncertain interval is small on a healthy path and operationally significant on a failed one."
+                          data-zh="在正常路径上，不确定窗口很短；在故障路径上，它却会产生显著的运维影响。">
+                The uncertain interval is small on a healthy path and operationally significant on a failed one.
+              </figcaption>
+            </figure>
+
+            <h3 id="coordinator-failure" data-outline data-en="Coordinator failure is not an edge case" data-zh="协调者故障不是边缘情况">Coordinator failure is not an edge case</h3>
+            <p data-en="A coordinator can pause because of a process crash, a network partition, an overloaded runtime, or a slow dependency. From a participant’s perspective, these different causes may look identical: the final decision has not arrived."
+               data-zh="协调者可能因为进程崩溃、网络分区、运行时过载或下游依赖变慢而暂停。从参与者视角看，这些不同原因可能完全相同：最终决策没有到达。">
+              A coordinator can pause because of a process crash, a network partition, an overloaded runtime, or a slow dependency. From a participant’s perspective, these different causes may look identical: the final decision has not arrived.
+            </p>
+            <blockquote>
+              <p data-en="The hardest production failures are often not invalid states. They are valid states that last much longer than anyone expected."
+                 data-zh="最棘手的生产故障往往不是无效状态，而是持续时间远超预期的有效状态。">
+                The hardest production failures are often not invalid states. They are valid states that last much longer than anyone expected.
+              </p>
+            </blockquote>
+          </section>
+
+          <section aria-labelledby="what-changed">
+            <h2 id="what-changed" data-outline data-en="What changed in production" data-zh="生产环境改变了什么">What changed in production</h2>
+            <p data-en="The initial design treated transaction completion as a correctness problem. Operational experience reframed it as a correctness, latency, and diagnosability problem. A decision that is eventually correct can still be unacceptable if it blocks unrelated work or cannot be explained quickly."
+               data-zh="最初的设计把事务完成视为正确性问题。运维经验则让我们重新认识到，它同时也是延迟与可诊断性问题。即使一个决策最终正确，如果它阻塞了无关工作或无法被快速解释，仍然可能不可接受。">
+              The initial design treated transaction completion as a correctness problem. Operational experience reframed it as a correctness, latency, and diagnosability problem. A decision that is eventually correct can still be unacceptable if it blocks unrelated work or cannot be explained quickly.
+            </p>
+            <pre aria-label="Illustrative transaction state"><code>transaction_id: tx_2048
+state: prepared
+waiting_for: coordinator_decision
+age_ms: 18340
+affected_resources: [inventory:42, order:918]</code></pre>
+            <p data-en="The useful question was no longer only “will this commit?” It became “what is waiting, what does it block, and what safe action can an operator take now?”"
+               data-zh="有用的问题不再只是“它最终会提交吗？”，而变成了“什么正在等待、它阻塞了什么，以及运维人员现在可以采取什么安全行动？”">
+              The useful question was no longer only “will this commit?” It became “what is waiting, what does it block, and what safe action can an operator take now?”
+            </p>
+          </section>
+
+          <section aria-labelledby="moving-to-sagas">
+            <h2 id="moving-to-sagas" data-outline data-en="Moving to explicit workflows" data-zh="转向显式工作流">Moving to explicit workflows</h2>
+            <p data-en="The alternative was not a protocol with no trade-offs. We replaced one global atomic decision with a sequence of local decisions and explicit compensating actions. This made intermediate states part of the domain model rather than a hidden protocol phase."
+               data-zh="替代方案并不是一个没有权衡的协议。我们用一系列局部决策和显式补偿操作，替代了单一的全局原子决策。中间状态因此成为领域模型的一部分，而不再是隐藏的协议阶段。">
+              The alternative was not a protocol with no trade-offs. We replaced one global atomic decision with a sequence of local decisions and explicit compensating actions. This made intermediate states part of the domain model rather than a hidden protocol phase.
+            </p>
+            <h3 id="compensation-domain-logic" data-outline data-en="Compensation is domain logic" data-zh="补偿属于领域逻辑">Compensation is domain logic</h3>
+            <p data-en="A compensating action is rarely a perfect inverse. Refunding a payment, releasing inventory, and notifying a user each have their own failure modes and timing constraints. Treating them as first-class domain operations made those differences visible in code and monitoring."
+               data-zh="补偿操作很少是原操作的完美逆过程。退款、释放库存与通知用户各自具有不同的故障模式和时序约束。把它们视为一等领域操作，才能让这些差异在代码与监控中清晰可见。">
+              A compensating action is rarely a perfect inverse. Refunding a payment, releasing inventory, and notifying a user each have their own failure modes and timing constraints. Treating them as first-class domain operations made those differences visible in code and monitoring.
+            </p>
+          </section>
+
+          <section aria-labelledby="evaluating-tradeoff">
+            <h2 id="evaluating-tradeoff" data-outline data-en="Evaluating the trade-off" data-zh="评估这种权衡">Evaluating the trade-off</h2>
+            <p data-en="A useful comparison should include more than throughput. The table below shows the dimensions we would record in an illustrative experiment before choosing either design."
+               data-zh="有用的比较不能只包含吞吐量。下表展示了在说明性实验中，我们会在选择任一方案前记录的关键维度。">
+              A useful comparison should include more than throughput. The table below shows the dimensions we would record in an illustrative experiment before choosing either design.
+            </p>
+            <div class="article-table-wrap">
+              <table>
+                <thead><tr><th data-en="Dimension" data-zh="维度">Dimension</th><th>2PC</th><th data-en="Explicit workflow" data-zh="显式工作流">Explicit workflow</th></tr></thead>
+                <tbody>
+                  <tr><td data-en="Consistency model" data-zh="一致性模型">Consistency model</td><td data-en="Atomic visibility" data-zh="原子可见">Atomic visibility</td><td data-en="Eventual convergence" data-zh="最终收敛">Eventual convergence</td></tr>
+                  <tr><td data-en="Failure state" data-zh="故障状态">Failure state</td><td data-en="Protocol uncertainty" data-zh="协议不确定性">Protocol uncertainty</td><td data-en="Domain-visible progress" data-zh="领域可见进度">Domain-visible progress</td></tr>
+                  <tr><td data-en="Recovery" data-zh="恢复方式">Recovery</td><td data-en="Coordinator and logs" data-zh="协调者与日志">Coordinator and logs</td><td data-en="Retries and compensation" data-zh="重试与补偿">Retries and compensation</td></tr>
+                  <tr><td data-en="Primary risk" data-zh="主要风险">Primary risk</td><td data-en="Blocking" data-zh="阻塞">Blocking</td><td data-en="Business-state complexity" data-zh="业务状态复杂度">Business-state complexity</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section aria-labelledby="lessons">
+            <h2 id="lessons" data-outline data-en="Lessons worth carrying forward" data-zh="值得保留的经验">Lessons worth carrying forward</h2>
+            <ol class="article-lessons">
+              <li data-en="Measure how long valid intermediate states persist, not only whether the final result is correct."
+                  data-zh="不仅要判断最终结果是否正确，还要测量有效中间状态会持续多久。">Measure how long valid intermediate states persist, not only whether the final result is correct.</li>
+              <li data-en="Make recovery ownership explicit: protocol, platform, application, or operator."
+                  data-zh="明确恢复责任属于协议、平台、应用还是运维人员。">Make recovery ownership explicit: protocol, platform, application, or operator.</li>
+              <li data-en="Choose the failure model you can observe and operate, not merely the one with the cleanest diagram."
+                  data-zh="选择你能够观察和运维的故障模型，而不仅是架构图最整洁的那个。">Choose the failure model you can observe and operate, not merely the one with the cleanest diagram.</li>
+            </ol>
+            <p data-en="The broader lesson is not that two-phase commit is always wrong. It is that a protocol should be evaluated in the operational context that must carry its uncertain states."
+               data-zh="更广泛的结论并不是两阶段提交永远错误，而是任何协议都应放在实际承载其不确定状态的运维环境中评估。">
+              The broader lesson is not that two-phase commit is always wrong. It is that a protocol should be evaluated in the operational context that must carry its uncertain states.
+            </p>
+          </section>
+
+          <footer class="article-end">
+            <p data-en="This is placeholder content created to test the article design. Replace it with a real post before publishing."
+               data-zh="本文为测试文章页面设计而创建的占位内容，正式发布前请替换为真实文章。">
+              This is placeholder content created to test the article design. Replace it with a real post before publishing.
+            </p>
+            <a href="index.html" data-en="← Back to all writing" data-zh="← 返回全部文章">← Back to all writing</a>
+          </footer>
+        </div>
+      </article>
+
+      <nav class="article-pagination shell" aria-label="Adjacent articles">
+        <span><small data-en="Previous" data-zh="上一篇">Previous</small><strong data-en="This is the first sample article" data-zh="这是第一篇示例文章">This is the first sample article</strong></span>
+        <a href="index.html"><small data-en="Next" data-zh="下一篇">Next</small><strong data-en="What the Go scheduler is really solving →" data-zh="Go 调度器真正解决了什么 →">What the Go scheduler is really solving →</strong></a>
+      </nav>
+    </main>
+
+    <div class="outline-control">
+      <button id="outline-toggle" class="outline-toggle" type="button" aria-expanded="false" aria-controls="outline-panel">
+        <span data-en="Outline" data-zh="大纲">Outline</span>
+        <span class="outline-position"><span id="outline-current">1</span>/<span id="outline-total">0</span></span>
+      </button>
+      <nav id="outline-panel" class="outline-panel" aria-label="Article outline" hidden>
+        <div class="outline-panel-header">
+          <div><span data-en="On this page" data-zh="本页大纲">On this page</span><small data-en="Jump to a section" data-zh="快速跳转章节">Jump to a section</small></div>
+          <button id="outline-close" type="button" aria-label="Close outline">×</button>
+        </div>
+        <ol id="outline-list"></ol>
+      </nav>
+    </div>
+
+    <footer class="article-site-footer">
+      <div class="shell"><span>© <span id="year"></span> Jefferson Zhou</span><a href="about.html" data-en="About the author →" data-zh="关于作者 →">About the author →</a></div>
+    </footer>
+  </body>
+</html>
