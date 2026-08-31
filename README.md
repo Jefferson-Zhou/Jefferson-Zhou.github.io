@@ -1,31 +1,47 @@
-# Jefferson Zhou — academic profile
+# Jefferson Zhou — personal homepage
 
-A restrained, bilingual personal site intended for PhD applications and research writing.
+A restrained, bilingual personal website for academic applications, research notes, and long-form writing. The site is plain HTML, CSS, and JavaScript so it can be published directly with GitHub Pages.
 
-## Site structure
+## Project map
 
-- `index.html` — blog home with featured notes, topic filters, and the complete writing feed.
-- `about.html` — academic profile with research interests, education, experience, projects, publications, and contact details.
-- `article.html` — reusable long-form article layout with reading progress, rich content components, and an interactive outline popover.
-- `styles.css` and `main.js` — shared design, responsive navigation, language switching, and blog filtering.
+```text
+.
+├── index.html                     # Blog home and article index
+├── about.html                     # Academic profile
+├── article.html                   # First published article (keep unchanged)
+├── articles/
+│   ├── README.md                  # New-article workflow and checklist
+│   └── _template.html             # Copy this file for every new article
+├── assets/
+│   ├── personal-wiki-workflow.png # Image used by the first article
+│   └── articles/                  # Images for future articles, grouped by slug
+├── styles.css                     # Shared visual system and page styles
+├── main.js                        # Shared navigation, language, filters, outline
+└── .github/workflows/pages.yml    # GitHub Pages deployment
+```
 
-## Before publishing
+## Add a new article
 
-Edit `index.html` and `about.html`, replacing every item marked `Sample` and every instruction in brackets (`[ ... ]`) with verified information. In particular:
+1. Copy `articles/_template.html` to `articles/your-article-slug.html`.
+2. Follow the placeholders and checklist in `articles/README.md`.
+3. Put article images in `assets/articles/your-article-slug/`.
+4. Add the new title, summary, category, and link to `index.html`.
 
-1. Update the PhD intake year and location.
-2. Replace the education and experience timeline.
-3. Replace the two sample selected-work entries with real projects, papers, or preprints.
-4. Connect each blog title to a real article, or remove it until the article exists.
-5. Add an academic email, CV PDF, Google Scholar, ORCID, and LinkedIn only when available.
-6. Replace the `JZ` portrait placeholder with a professional headshot if desired.
+The template already includes the shared header, long-form typography, reading progress, responsive Outline Popover, previous/next navigation, and footer.
 
-Keep claims specific and evidence-based. For each project, write: **problem → your contribution → method → result**.
+## Editing boundaries
 
-## Preview
+- `article.html` is the hand-formatted first article. Treat it as published content and do not use automated formatting on it.
+- Shared behavior belongs in `main.js`; shared presentation belongs in `styles.css`.
+- New article-specific content belongs in `articles/`, not in the shared files.
+- Generated screenshots and local test output belong in `output/`, which is ignored by Git.
 
-Open `index.html` directly, or serve this folder with any static web server.
+## Preview and publish
 
-## Publish with GitHub Pages
+Serve the repository with a static web server, for example:
 
-This repository includes `.github/workflows/pages.yml`. Push the `main` branch to GitHub, then open **Settings → Pages** and select **GitHub Actions** as the source. Every later push to `main` will publish the newest version automatically.
+```sh
+python3 -m http.server 4173
+```
+
+Then open `http://127.0.0.1:4173/`. Pushing the `main` branch triggers the GitHub Pages workflow in `.github/workflows/pages.yml`.

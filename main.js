@@ -1,4 +1,5 @@
 (function () {
+  // Shared site shell: language, responsive navigation, and footer year.
   const root = document.documentElement;
   const languageButton = document.querySelector('.language-toggle');
   const menuButton = document.querySelector('.menu-toggle');
@@ -27,13 +28,9 @@
       about: {
         en: 'About — Jefferson Zhou',
         zh: '关于 — Jefferson Zhou'
-      },
-      article: {
-        en: 'Why we moved beyond two-phase commit — Jefferson Zhou',
-        zh: '为什么我们不再使用两阶段提交 — Jefferson Zhou'
       }
     };
-    document.title = (titles[page] || titles.about)[language];
+    if (titles[page]) document.title = titles[page][language];
     localStorage.setItem('profile-language', language);
     window.dispatchEvent(new CustomEvent('languagechange', { detail: { language } }));
   }
@@ -74,6 +71,7 @@
 
   sections.forEach((section) => observer.observe(section));
 
+  // Blog home: topic filters.
   const filterButtons = [...document.querySelectorAll('[data-filter]')];
   const blogRows = [...document.querySelectorAll('.blog-row[data-category]')];
 
@@ -88,6 +86,7 @@
     });
   });
 
+  // Article pages: generated outline, active section, and reading progress.
   const outlineToggle = document.querySelector('#outline-toggle');
   const outlinePanel = document.querySelector('#outline-panel');
   const outlineClose = document.querySelector('#outline-close');

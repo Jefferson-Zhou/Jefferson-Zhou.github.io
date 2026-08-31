@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="[REPLACE: 文章摘要，建议 80–150 字]" />
+    <meta name="theme-color" content="#f5f2ea" />
+    <title>[REPLACE: 文章标题] — Jefferson Zhou</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&amp;family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&amp;display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../styles.css" />
+    <script src="../main.js" defer></script>
+  </head>
+  <body data-page="article">
+    <!--
+      NEW ARTICLE CHECKLIST
+      1. Replace every [REPLACE: ...] placeholder.
+      2. Give every outline heading a unique id and data-outline.
+      3. Delete example blocks that the article does not use.
+      4. Add the finished page to ../index.html.
+    -->
+    <div id="reading-progress" aria-hidden="true"></div>
+    <a class="skip-link" href="#article-content" data-en="Skip to article" data-zh="跳到正文">跳到正文</a>
+
+    <header class="site-header">
+      <div class="shell header-inner">
+        <a class="wordmark" href="../index.html" aria-label="Jefferson Zhou, home">
+          <span class="wordmark-mark" aria-hidden="true">JZ</span>
+          <span>Jefferson Zhou</span>
+        </a>
+        <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav" data-en="Menu" data-zh="菜单">菜单</button>
+        <nav id="site-nav" class="site-nav" aria-label="Primary navigation">
+          <a href="../index.html" data-en="Home" data-zh="首页">首页</a>
+          <a href="../about.html" data-en="About" data-zh="关于">关于</a>
+        </nav>
+        <button class="language-toggle" type="button" aria-label="Switch to English">EN</button>
+      </div>
+    </header>
+
+    <main>
+      <article class="article-page" lang="zh-CN">
+        <header class="article-header shell">
+          <nav class="article-breadcrumb" aria-label="面包屑">
+            <a href="../index.html" data-en="Writing" data-zh="写作">写作</a>
+            <span aria-hidden="true">/</span>
+            <span>[REPLACE: 分类]</span>
+          </nav>
+
+          <p class="eyebrow">[REPLACE: 文章类型 · 主题]</p>
+          <h1>[REPLACE: 文章标题]</h1>
+          <p class="article-subtitle">[REPLACE: 一句话说明文章解决的问题或提供的价值]</p>
+          <p class="article-meta">
+            <time datetime="YYYY-MM-DD">发布于 [REPLACE: 日期]</time>
+            <time datetime="YYYY-MM-DD">最近更新于 [REPLACE: 日期]</time>
+          </p>
+        </header>
+
+        <div id="article-content" class="article-content">
+          <p class="article-lead">[REPLACE: 开篇段落。直接说明写作背景、问题或观察。]</p>
+          <p>[REPLACE: 补充背景，让读者知道为什么值得继续阅读。]</p>
+
+          <section aria-labelledby="first-section">
+            <h2 id="first-section" data-outline>[REPLACE: 第一个章节]</h2>
+            <p class="section-deck">[REPLACE: 可选的章节说明；不用时删除这一行]</p>
+            <p>[REPLACE: 正文。]</p>
+
+            <h3 id="first-subsection" data-outline>[REPLACE: 子章节]</h3>
+            <p>[REPLACE: 正文。]</p>
+
+            <aside class="article-note">
+              <p>[REPLACE: 可选提示或补充说明；不用时删除整个 aside。]</p>
+            </aside>
+
+            <ul class="article-list">
+              <li>[REPLACE: 列表项一]</li>
+              <li>[REPLACE: 列表项二]</li>
+              <li>[REPLACE: 列表项三]</li>
+            </ul>
+          </section>
+
+          <section aria-labelledby="second-section">
+            <h2 id="second-section" data-outline>[REPLACE: 第二个章节]</h2>
+            <p>[REPLACE: 正文。]</p>
+
+            <!-- Optional figure. Replace the path and uncomment when needed.
+            <figure class="article-figure">
+              <img src="../assets/articles/[REPLACE: slug]/[REPLACE: image]" width="1200" height="700" alt="[REPLACE: 图片说明]" loading="lazy" />
+              <figcaption>[REPLACE: 图注]</figcaption>
+            </figure>
+            -->
+
+            <div class="article-table-wrap">
+              <table>
+                <thead><tr><th>[REPLACE: 列一]</th><th>[REPLACE: 列二]</th></tr></thead>
+                <tbody>
+                  <tr><td>[REPLACE: 内容]</td><td>[REPLACE: 内容]</td></tr>
+                  <tr><td>[REPLACE: 内容]</td><td>[REPLACE: 内容]</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <blockquote><p>[REPLACE: 可选引用；不用时删除整个 blockquote。]</p></blockquote>
+            <pre aria-label="[REPLACE: 代码说明]"><code>[REPLACE: 代码或命令]</code></pre>
+          </section>
+
+          <footer class="article-end">
+            <a href="../index.html" data-en="← Back to all writing" data-zh="← 返回全部文章">← 返回全部文章</a>
+          </footer>
+        </div>
+      </article>
+
+      <nav class="article-pagination shell" aria-label="相邻文章">
+        <a href="[REPLACE: 上一篇路径]"><small data-en="Previous" data-zh="上一篇">上一篇</small><strong>[REPLACE: 上一篇标题]</strong></a>
+        <a href="[REPLACE: 下一篇路径]"><small data-en="Next" data-zh="下一篇">下一篇</small><strong>[REPLACE: 下一篇标题] →</strong></a>
+      </nav>
+    </main>
+
+    <div class="outline-control">
+      <button id="outline-toggle" class="outline-toggle" type="button" aria-expanded="false" aria-controls="outline-panel">
+        <span data-en="Outline" data-zh="大纲">大纲</span>
+        <span class="outline-position"><span id="outline-current">1</span>/<span id="outline-total">0</span></span>
+      </button>
+      <nav id="outline-panel" class="outline-panel" aria-label="文章大纲" hidden>
+        <div class="outline-panel-header">
+          <div><span data-en="On this page" data-zh="本页大纲">本页大纲</span><small data-en="Jump to a section" data-zh="快速跳转章节">快速跳转章节</small></div>
+          <button id="outline-close" type="button" aria-label="关闭大纲">×</button>
+        </div>
+        <ol id="outline-list"></ol>
+      </nav>
+    </div>
+
+    <footer class="article-site-footer">
+      <div class="shell"><span>© <span id="year"></span> Jefferson Zhou</span><a href="../about.html" data-en="About the author →" data-zh="关于作者 →">关于作者 →</a></div>
+    </footer>
+  </body>
+</html>
