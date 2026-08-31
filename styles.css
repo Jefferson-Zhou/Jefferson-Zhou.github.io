@@ -551,16 +551,12 @@ a {
   color: var(--accent-dark);
   text-decoration-color: rgba(148, 74, 57, 0.45);
   text-underline-offset: 0.16em;
+  transition: color 160ms ease, text-decoration-color 160ms ease;
 }
 
 .article-content a:hover {
+  color: var(--accent);
   text-decoration-color: var(--accent);
-}
-
-.link-placeholder {
-  color: var(--muted);
-  text-decoration: underline dotted;
-  text-underline-offset: 0.16em;
 }
 
 .article-list {
