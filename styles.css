@@ -6,6 +6,7 @@
   --rule: #cbc4b7;
   --accent: #944a39;
   --accent-dark: #6e3226;
+  --accent-hover: #a85f4c;
   --serif: "Source Serif 4", Georgia, serif;
   --mono: "DM Mono", "SFMono-Regular", Consolas, monospace;
   --shell: min(1120px, calc(100vw - 48px));
@@ -550,13 +551,16 @@ a {
 .article-content a {
   color: var(--accent-dark);
   text-decoration-color: rgba(148, 74, 57, 0.45);
+  text-decoration-thickness: 1px;
   text-underline-offset: 0.16em;
-  transition: color 160ms ease, text-decoration-color 160ms ease;
+  transition: color 160ms ease, text-decoration-color 160ms ease, text-decoration-thickness 160ms ease;
 }
 
-.article-content a:hover {
-  color: var(--accent);
-  text-decoration-color: var(--accent);
+.article-content a:hover,
+.article-content a:focus-visible {
+  color: var(--accent-hover);
+  text-decoration-color: var(--accent-hover);
+  text-decoration-thickness: 2px;
 }
 
 .article-list {
