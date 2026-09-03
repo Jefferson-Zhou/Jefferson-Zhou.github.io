@@ -6,17 +6,22 @@
   const navigation = document.querySelector('.site-nav');
   const year = document.querySelector('#year');
   const translatedElements = document.querySelectorAll('[data-en][data-zh]');
+  const translatedLinks = document.querySelectorAll('[data-href-en][data-href-zh]');
   const page = document.body.dataset.page || 'about';
+  const articleLanguage = document.body.dataset.articleLanguage;
 
   if (year) year.textContent = new Date().getFullYear();
 
-  let language = localStorage.getItem('profile-language') || 'en';
+  let language = articleLanguage || localStorage.getItem('profile-language') || 'en';
 
   function setLanguage(nextLanguage) {
     language = nextLanguage === 'zh' ? 'zh' : 'en';
     root.lang = language === 'zh' ? 'zh-CN' : 'en';
     translatedElements.forEach((element) => {
       element.textContent = element.dataset[language];
+    });
+    translatedLinks.forEach((link) => {
+      link.setAttribute('href', link.dataset[`href${language === 'en' ? 'En' : 'Zh'}`]);
     });
     languageButton.textContent = language === 'en' ? '中文' : 'EN';
     languageButton.setAttribute('aria-label', language === 'en' ? '切换为中文' : 'Switch to English');
@@ -38,7 +43,14 @@
   setLanguage(language);
 
   languageButton.addEventListener('click', () => {
-    setLanguage(language === 'en' ? 'zh' : 'en');
+    const nextLanguage = language === 'en' ? 'zh' : 'en';
+    const counterpartUrl = document.body.dataset[nextLanguage === 'en' ? 'languageUrlEn' : 'languageUrlZh'];
+    if (articleLanguage && counterpartUrl) {
+      localStorage.setItem('profile-language', nextLanguage);
+      window.location.href = counterpartUrl;
+      return;
+    }
+    setLanguage(nextLanguage);
   });
 
   menuButton.addEventListener('click', () => {

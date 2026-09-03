@@ -23,6 +23,10 @@ Article files in this folder use paths relative to `articles/`:
 
 Do not move the existing root-level `article.html`; it is the first hand-formatted article and intentionally remains unchanged.
 
+## Bilingual articles
+
+Keep each language version as a separate HTML file so long-form article markup is never overwritten by the interface translator. Add `data-article-language` and the counterpart URL to each page's `<body>`, following `../article.html` and `aggregate-your-personal-knowledge.html` as the working example. On the home page, use `data-href-en` and `data-href-zh` so each language opens the matching article.
+
 ## Useful content blocks
 
 - Lead paragraph: `<p class="article-lead">...</p>`
