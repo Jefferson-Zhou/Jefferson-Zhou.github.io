@@ -7,6 +7,7 @@
   const year = document.querySelector('#year');
   const translatedElements = document.querySelectorAll('[data-en][data-zh]');
   const translatedLinks = document.querySelectorAll('[data-href-en][data-href-zh]');
+  const languageOnlyElements = document.querySelectorAll('[data-language-only]');
   const page = document.body.dataset.page || 'about';
   const articleLanguage = document.body.dataset.articleLanguage;
 
@@ -22,6 +23,9 @@
     });
     translatedLinks.forEach((link) => {
       link.setAttribute('href', link.dataset[`href${language === 'en' ? 'En' : 'Zh'}`]);
+    });
+    languageOnlyElements.forEach((element) => {
+      element.hidden = element.dataset.languageOnly !== language;
     });
     languageButton.textContent = language === 'en' ? '中文' : 'EN';
     languageButton.setAttribute('aria-label', language === 'en' ? '切换为中文' : 'Switch to English');
