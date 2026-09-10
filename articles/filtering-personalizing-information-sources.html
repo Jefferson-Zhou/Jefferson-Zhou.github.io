@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="A practical approach to lateral reading, source evaluation, attention costs, and building a more intentional information diet with RSS." />
+    <meta name="theme-color" content="#f5f2ea" />
+    <title>Filtering，Personalizing Information Sources — Jefferson Zhou</title>
+    <link rel="alternate" hreflang="zh-CN" href="filter-personal-information.html" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&amp;family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&amp;display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../styles.css?v=20260908-2" />
+    <script src="../main.js" defer></script>
+  </head>
+  <body data-page="article" data-article-language="en" data-language-url-zh="filter-personal-information.html">
+    <div id="reading-progress" aria-hidden="true"></div>
+    <a class="skip-link" href="#article-content" data-en="Skip to article" data-zh="跳到正文">Skip to article</a>
+
+    <header class="site-header">
+      <div class="shell header-inner">
+        <a class="wordmark" href="../index.html" aria-label="Jefferson Zhou, home">
+          <span class="wordmark-mark" aria-hidden="true">JZ</span>
+          <span>Jefferson Zhou</span>
+        </a>
+        <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav" data-en="Menu" data-zh="菜单">Menu</button>
+        <nav id="site-nav" class="site-nav" aria-label="Primary navigation">
+          <a href="../index.html" data-en="Home" data-zh="首页">Home</a>
+          <a href="../about.html" data-en="About" data-zh="关于">About</a>
+        </nav>
+        <button class="language-toggle" type="button" aria-label="切换为中文">中文</button>
+      </div>
+    </header>
+
+    <main>
+      <article class="article-page" lang="en">
+        <header class="article-header shell">
+          <nav class="article-breadcrumb" aria-label="Breadcrumb">
+            <a href="../index.html" data-en="Writing" data-zh="写作">Writing</a>
+            <span aria-hidden="true">/</span>
+            <span>Information filtering</span>
+          </nav>
+
+          <p class="eyebrow">Essay · Information literacy</p>
+          <h1>Filtering，Personalizing Information Sources</h1>
+          <p class="article-subtitle">From lateral reading and source evaluation to RSS, a practical approach to building a more intentional, lower-noise information diet.</p>
+          <p class="article-meta">
+            <time datetime="2026-09-08">Published September 8, 2026</time>
+            <time datetime="2026-09-10">Last updated September 10, 2026</time>
+          </p>
+        </header>
+
+        <div id="article-content" class="article-content">
+          <p class="article-preface"><em>Disclaimer: this approach works for me. It may not work for everyone, but I hope it gives you a few ideas.</em></p>
+
+          <p class="article-lead">I was chatting with a friend recently when he told me, “I keep trying to step outside my information bubble, but the signal-to-noise ratio on social media and in apps is just too low. It is hard to have a consistently good experience. Now and then I find a worthwhile discussion or a useful solution online. Still, when I actually run into a problem and go looking for answers, I usually come up empty-handed.” Like most people, I had never thought seriously about how to solve this. Then he asked, “Can you recommend any good sources or channels?” That question sent me digging through all kinds of material online and eventually led me to write down a few rough thoughts of my own.</p>
+
+          <section aria-labelledby="check-the-source">
+            <h2 id="check-the-source" data-outline>Before You Start Reading, Find Out Who Is Speaking</h2>
+
+            <p>When an article looks professional, its layout, the name of the organization behind it, or its long list of references can easily win you over. Reading it closely, however, does not necessarily reveal what is wrong with it.</p>
+
+            <p>In 2017, the Stanford History Education Group released a study that was later formally published in 2019.<sup class="citation"><a id="cite-1" href="#ref-1" aria-label="Jump to reference 1">[1]</a></sup> It compared how professional fact-checkers, historians, and Stanford undergraduates assessed the credibility of online information. The result was slightly counterintuitive: fact-checkers read less, yet reached better conclusions more quickly. Many of the historians and students were influenced by the <a href="https://doi.org/10.1126/science.185.4157.1124" target="_blank" rel="noreferrer">representativeness heuristic</a>, judging a website’s credibility from cues such as a professional appearance, an institutional-sounding name, or a list of references. The crucial difference was that fact-checkers quickly left the original website to investigate its background elsewhere—a practice known as “lateral reading.” Historians and students were more likely to remain on the site, reading its articles, references, and About Us page closely—a practice known as “vertical reading.”<sup class="citation"><a id="cite-2" href="#ref-2" aria-label="Jump to reference 2">[2]</a></sup></p>
+
+            <details class="research-example">
+              <summary>The study offers a concrete example:<span class="research-example-arrow" aria-hidden="true">→</span></summary>
+              <div class="research-example-body">
+                <p>Participants were asked to assess the credibility of minimumwage.com. On the surface, the site appeared to be backed by the Employment Policy Institute (EPI), which described itself as a “nonpartisan, nonprofit research organization.” In fact, both EPI and minimumwage.com were connected to Berman and Company, a public-relations firm representing the interests of the restaurant and hotel industries.</p>
+
+                <p><strong>The fact-checkers</strong> read laterally. They quickly left the site, opened several tabs, and used Google, SourceWatch, news reports, and other third-party sources to investigate both the website and EPI. They spent relatively little time reading the site itself and actively cross-checked what they found.</p>
+                <figure class="article-figure">
+                  <img src="../assets/articles/filter-personal-information/fact-checker-browsing-pattern.png" width="1336" height="532" alt="Fact-checkers using several external sources for lateral reading" loading="lazy" />
+                  <figcaption>Fact-checkers’ lateral-reading path.</figcaption>
+                </figure>
+
+                <p><strong>The historians</strong> relied more heavily on traditional deep, or vertical, reading. They closely examined the site’s articles, research, and About page. Some attempted lateral searches, but their search strategies were less effective: they chose weak keywords or did not make good use of quotation marks and search operators.</p>
+
+                <p><strong>Most of the students</strong> either read vertically or browsed the site casually. They clicked on attention-grabbing features such as maps and statistics instead of investigating the organizations and funding behind the site, and they lacked a clear strategy for verifying the information.</p>
+
+                <figure class="article-figure stacked-table-figure">
+                  <img src="../assets/articles/filter-personal-information/historian-browsing-pattern.png" width="1234" height="172" alt="Header portion of the historians and students browsing-path table" loading="lazy" />
+                  <img src="../assets/articles/filter-personal-information/student-browsing-pattern.png" width="1234" height="866" alt="Main portion of the historians and students browsing-path table" loading="lazy" />
+                </figure>
+              </div>
+            </details>
+
+            <p>For me, the most useful part of this method is the reminder to clarify what I am trying to find out: am I investigating “who is speaking,” or “whether this particular claim is true”? For the first question, I can search for the author and organization, then look into their background, expertise, and possible interests. For the second, I need to follow the specific claim back to its evidence. If I see a clipped quotation, I should find the full conversation; if I see a statistic reported second-hand, I should look for the original report. Mike Caulfield’s SIFT method recommends much the same process: stop, investigate the source, find better coverage, and trace claims, quotations, and images back to their original context.<sup class="citation"><a id="cite-3" href="#ref-3" aria-label="Jump to reference 3">[3]</a></sup></p>
+
+            <p>Opening a few extra tabs is not enough, though. If ten news stories all repeat the same press release, they do not amount to ten independent pieces of evidence. Cross-checking means tracing where each report came from and asking whether it draws on its own interviews, data, or original documents.</p>
+
+            <p>Reading across sources is useful for more than separating truth from falsehood. Sometimes a text is difficult simply because I lack the necessary background. Tyler Cowen has described reading several books around the same subject before returning to an earlier one; with more context, ideas that were unclear the first time begin to fall into place.<sup class="citation"><a id="cite-4" href="#ref-4" aria-label="Jump to reference 4">[4]</a></sup> That strikes me as more useful than grinding through the same article again and again.</p>
+          </section>
+
+          <section aria-labelledby="valuable-sources">
+            <h2 id="valuable-sources" data-outline>What Makes an Information Source Worth Keeping?</h2>
+
+            <p>A genuinely good source will tell you how it might be wrong, the assumptions under which its conclusions hold, and what counterexamples or uncertainties remain. A source that presents only the evidence in its favor can be dangerous.<sup class="citation"><a id="cite-5" href="#ref-5" aria-label="Jump to reference 5">[5]</a></sup> Feynman originally made this point about scientific research, but I think it also works as a rule of thumb for evaluating everyday sources: does the source disclose the limits of its evidence, possible counterexamples, conflicts of interest, and the conditions under which it might fail?</p>
+
+            <p>Of course, a source does not need to excel at everything. Social media is useful for discovering new topics. Specialist blogs, newsletters, and podcasts can supply background and explanation. Papers, official documents, and datasets make it easier to trace claims back to evidence. Reviews help sketch the shape of a field, but they may lag behind the latest work; an individual paper may be close to the evidence, but it does not necessarily represent the consensus of an entire field. I prefer to combine these sources and follow the trail further when a question really matters.</p>
+
+            <p>Another easy-to-miss question is how much of my time a source consumes. Herbert Simon observed that an abundance of information creates a scarcity of attention, and that information systems therefore need to help us absorb, filter, and compress what we receive.<sup class="citation"><a id="cite-6" href="#ref-6" aria-label="Jump to reference 6">[6]</a></sup> An account that publishes dozens of low-value posts a day, with only the occasional useful one, may be less valuable to me than a quieter blog that pays off more consistently.</p>
+
+            <p>If I had to express it as a rough formula, it would look like this:</p>
+            <p class="source-value-formula" role="math" aria-label="Source value is approximately relevance times evidence quality times uniqueness times ability to self-correct, divided by attention cost">Source value ≈ relevance × evidence quality × uniqueness × ability to self-correct ÷ attention cost</p>
+          </section>
+
+          <section aria-labelledby="organize-with-rss">
+            <h2 id="organize-with-rss" data-outline>Organizing My Subscriptions with RSS</h2>
+
+            <p>Since the internet became widespread, we have been living in a state of information overload. The web is full of low-quality noise, and social-media recommendation algorithms consume a great deal of our time. (That does not mean recommendation algorithms are useless: they can save time and help us discover more of what interests us. But it is also easy to lose hours to meaningless recommendations without even noticing.) “I feel as if I take in far too much information I do not care about every day, or I end up being affected by a lot of negativity.” This bothers me, my friend, and probably many other people as well: “I have installed so many apps and followed creators on all kinds of platforms. Once I turn on notifications, the constant stream of alerts becomes annoying too.”</p>
+
+            <p>RSS (Really Simple Syndication) emerged during the Web 1.0 era and became a mainstream way of organizing information around 2000, when blogs defined much of the web.<sup class="citation"><a id="cite-7" href="#ref-7" aria-label="Jump to reference 7">[7]</a></sup><sup class="citation"><a id="cite-8" href="#ref-8" aria-label="Jump to reference 8">[8]</a></sup> The rise of centralized social networks in the Web 2.0 era contributed to RSS’s decline. Fortunately, many websites still offer RSS feeds, while others can be converted into feed-compatible formats. This makes it possible to build a personalized information service without relying on platform recommendation algorithms or exposing as much personal data.<sup class="citation"><a id="cite-9" href="#ref-9" aria-label="Jump to reference 9">[9]</a></sup></p>
+
+            <p>There are plenty of RSS readers to choose from, including <a href="https://feedly.com/" target="_blank" rel="noreferrer">Feedly</a>, <a href="https://www.inoreader.com/" target="_blank" rel="noreferrer">Inoreader</a>, and <a href="https://folo.is/" target="_blank" rel="noreferrer">Folo</a>, which is what I currently use. You could also try <a href="https://www.feedbro.com/" target="_blank" rel="noreferrer">Feedbro</a> or <a href="https://reederapp.com/" target="_blank" rel="noreferrer">Reeder</a>. I will not try to rank them here. Whether the interface feels pleasant and the app is easy to use probably matters more to long-term use than the length of its feature list.</p>
+
+            <p>To find feeds, start by searching for “publication name + RSS,” or look through subscription lists shared by writers you already like. If a site does not provide an obvious feed, <a href="https://rss.app/rss-feed" target="_blank" rel="noreferrer">RSS.app</a> or <a href="https://rss.feedspot.com/" target="_blank" rel="noreferrer">Feedspot</a> may offer a workable alternative. Gabriel Weinberg has described an approach that uses highly upvoted feeds as one input alongside specialist publications, podcasts, newsletters, and links recommended by friends.<sup class="citation"><a id="cite-10" href="#ref-10" aria-label="Jump to reference 10">[10]</a></sup> It is a useful idea, but popularity is best treated as a discovery signal, not a certificate of quality.</p>
+
+            <p>I would not recommend importing hundreds of subscriptions on day one. Start by thinking about what you care about right now and what problems you are trying to solve. Add a few relevant sources and read them for a while; you will soon notice what is missing. There is no need for every subscription to be relentlessly “useful,” either. A few hobby blogs and occasional recommendations from friends can make the reading list something you actually want to open.</p>
+          </section>
+
+          <section aria-labelledby="read-selectively">
+            <h2 id="read-selectively" data-outline>Subscribing Does Not Mean Reading Everything</h2>
+
+            <p>RSS can collect information for me, but I still have to decide how much to read and how often. Every source allowed to send notifications gains the power to interrupt me at any moment.<sup class="citation"><a id="cite-11" href="#ref-11" aria-label="Jump to reference 11">[11]</a></sup> I reserve instant alerts for information whose delay could genuinely affect my work or decisions. Everything else can wait. I might scan news and project updates once a day; professional analysis, newsletters, and research digests can wait for a weekly session; long reports and theoretical essays can sit until I have time to read them properly. Some material is only useful when a specific problem arises, so searching for it when needed is better than letting it occupy my feed forever. A source publishing frequently does not mean I need to read it frequently.</p>
+
+            <p>The real trouble usually begins when subscriptions keep multiplying. I may set out to escape the infinite feed only to recreate it inside RSS: the same story appears under different headlines, the unread count keeps climbing, and Read Later fills with articles I never reopen. At that point, I clean up my sources instead of pushing myself to read faster. I let a new author sit in a trial period and occasionally look back at the latest twenty posts from a long-standing subscription. How many were genuinely worth reading? Does the source mostly repeat information found elsewhere? Does it link to original material and correct its mistakes? If it has drifted toward clickbait, outrage, or promotion, there is little reason to keep it. When the backlog gets out of hand, I am also happy to mark everything as read. I want to open my reader and think, “What would I like to read?” rather than, “How much reading do I owe?” A little less information pressure is no bad thing.</p>
+          </section>
+
+          <section aria-labelledby="blind-spots">
+            <h2 id="blind-spots" data-outline>Choosing for Yourself Still Creates Blind Spots</h2>
+
+            <p>This brings me back to the information bubble my friend mentioned at the beginning. RSS cannot solve it automatically. Once the choice is mine, following only people who make me nod along can leave me seeing the same set of views over and over. Researchers usually describe this tendency as “selective exposure”: overall, people prefer information that agrees with their existing attitudes.<sup class="citation"><a id="cite-12" href="#ref-12" aria-label="Jump to reference 12">[12]</a></sup><sup class="citation"><a id="cite-13" href="#ref-13" aria-label="Jump to reference 13">[13]</a></sup> And because I already trust the writers I subscribe to, I may become less inclined to verify what they say.</p>
+
+            <p>For topics I genuinely care about, I therefore try to keep a few sources that offer meaningful counterexamples. This does not mean finding someone with the opposite position merely for the sake of balance. More useful sources fill in missing evidence, expose a questionable assumption, or offer another explanation. Occasionally searching for unfamiliar writers outside my subscription list also brings some novelty back into the mix.</p>
+
+            <p>AI summaries are another place where convenience can go too far. I am happy to use them for a quick decision about whether an article is worth opening, but when a piece contains important numbers, direct quotations, disputed claims, or information that might shape a real decision, I still return to the original. A summary may keep the conclusion while dropping qualifiers such as “may,” “is associated with,” or “in this particular sample.” At least in summaries of academic research, studies have found that LLMs may remove hedging language and even turn associations into causal claims.<sup class="citation"><a id="cite-14" href="#ref-14" aria-label="Jump to reference 14">[14]</a></sup> Those qualifications can completely change how we understand a finding.</p>
+
+            <p>After all this tinkering, what I really want is to make daily reading feel a little lighter: to find what I need to know, have something interesting to read, and comfortably miss the rest. A subscription list does not need to be perfect from the beginning. I can keep the sources that prove useful, replace the ones that do not, and let the whole system change along with my life. That is already enough.</p>
+
+            <p>In the future, I would like to create a space where people can collect and discuss their own information sources.</p>
+
+            <aside class="article-note">
+              <p><em>A note for later: I have not yet found a reasonably comprehensive RSS guide for beginners. I may add one in the future—or put one together myself.</em></p>
+            </aside>
+          </section>
+
+          <section class="article-references" aria-labelledby="references">
+            <h2 id="references" data-outline>References</h2>
+            <ol>
+              <li id="ref-1">Sam Wineburg、Sarah McGrew：<a href="https://doi.org/10.1177/016146811912101102" target="_blank" rel="noreferrer">Lateral Reading and the Nature of Expertise: Reading Less and Learning More When Evaluating Digital Information</a>、<a href="https://cjybyjk.github.io/Reading-Less-and-Learning-More-When-Evaluating-Digital-Information/" target="_blank" rel="noreferrer">中文翻译</a> <a class="reference-back" href="#cite-1" aria-label="Return to citation 1">↩</a></li>
+              <li id="ref-2">Carrie Spector：<a href="https://news.stanford.edu/stories/2017/10/fact-checkers-outperform-historians-evaluating-online-information" target="_blank" rel="noreferrer">Stanford Scholars Observe “Experts” to See How They Evaluate the Credibility of Information Online</a> <a class="reference-back" href="#cite-2" aria-label="Return to citation 2">↩</a></li>
+              <li id="ref-3">Mike Caulfield：<a href="https://hapgood.us/2019/06/19/sift-the-four-moves/" target="_blank" rel="noreferrer">SIFT (The Four Moves)</a> <a class="reference-back" href="#cite-3" aria-label="Return to citation 3">↩</a></li>
+              <li id="ref-4">EconTalk：<a href="https://www.econtalk.org/tyler-cowen-on-reading/" target="_blank" rel="noreferrer">Tyler Cowen on Reading</a> <a class="reference-back" href="#cite-4" aria-label="Return to citation 4">↩</a></li>
+              <li id="ref-5">Richard Feynman：<a href="https://calteches.library.caltech.edu/51/2/CargoCult.htm" target="_blank" rel="noreferrer">Cargo Cult Science</a> <a class="reference-back" href="#cite-5" aria-label="Return to citation 5">↩</a></li>
+              <li id="ref-6">Herbert Simon：<a href="https://iiif.library.cmu.edu/file/Simon_box00055_fld04178_bdl0002_doc0001/Simon_box00055_fld04178_bdl0002_doc0001.pdf" target="_blank" rel="noreferrer">Designing Organizations for an Information-Rich World</a> <a class="reference-back" href="#cite-6" aria-label="Return to citation 6">↩</a></li>
+              <li id="ref-7">RSS Advisory Board：<a href="https://www.rssboard.org/rss-specification" target="_blank" rel="noreferrer">RSS 2.0 Specification</a> <a class="reference-back" href="#cite-7" aria-label="Return to citation 7">↩</a></li>
+              <li id="ref-8">RSS Advisory Board：<a href="https://www.rssboard.org/rss-history" target="_blank" rel="noreferrer">RSS Specification History</a> <a class="reference-back" href="#cite-8" aria-label="Return to citation 8">↩</a></li>
+              <li id="ref-9"><a href="https://zhuanlan.zhihu.com/p/584401957" target="_blank" rel="noreferrer">RSS简史：Web1.0/2.0/3.0时代的RSS产品进化</a> <a class="reference-back" href="#cite-9" aria-label="Return to citation 9">↩</a></li>
+              <li id="ref-10">Gabriel Weinberg：<a href="https://gabrielweinberg.com/p/one-approach-to-a-heavily-curated" target="_blank" rel="noreferrer">One Approach to a Heavily Curated Information Diet</a> <a class="reference-back" href="#cite-10" aria-label="Return to citation 10">↩</a></li>
+              <li id="ref-11">Cary Stothart、Ainsley Mitchum、Courtney Yehnert：<a href="https://doi.org/10.1037/xhp0000100" target="_blank" rel="noreferrer">The Attentional Cost of Receiving a Cell Phone Notification</a> <a class="reference-back" href="#cite-11" aria-label="Return to citation 11">↩</a></li>
+              <li id="ref-12">William Hart 等：<a href="https://doi.org/10.1037/a0015701" target="_blank" rel="noreferrer">Feeling Validated Versus Being Correct: A Meta-Analysis of Selective Exposure to Information</a> <a class="reference-back" href="#cite-12" aria-label="Return to citation 12">↩</a></li>
+              <li id="ref-13">Eytan Bakshy、Solomon Messing、Lada Adamic：<a href="https://doi.org/10.1126/science.aaa1160" target="_blank" rel="noreferrer">Exposure to Ideologically Diverse News and Opinion on Facebook</a> <a class="reference-back" href="#cite-13" aria-label="Return to citation 13">↩</a></li>
+              <li id="ref-14">Calvin Isch 等：<a href="https://doi.org/10.1038/s41562-026-02553-x" target="_blank" rel="noreferrer">Quantifying the Prevalence and Impact of Overreaching Causal Claims in Social Science</a> <a class="reference-back" href="#cite-14" aria-label="Return to citation 14">↩</a></li>
+            </ol>
+          </section>
+
+          <footer class="article-end">
+            <a href="../index.html" data-en="← Back to all writing" data-zh="← 返回全部文章">← Back to all writing</a>
+          </footer>
+        </div>
+      </article>
+
+      <nav class="article-pagination shell" aria-label="Adjacent articles">
+        <a href="aggregate-your-personal-knowledge.html"><small data-en="Previous" data-zh="上一篇">Previous</small><strong>Aggregate Your Personal Knowledge and Build Your Wiki</strong></a>
+        <span><small data-en="Next" data-zh="下一篇">Next</small><strong>This is the latest article</strong></span>
+      </nav>
+    </main>
+
+    <div class="outline-control">
+      <button id="outline-toggle" class="outline-toggle" type="button" aria-expanded="false" aria-controls="outline-panel">
+        <span data-en="Outline" data-zh="大纲">Outline</span>
+        <span class="outline-position"><span id="outline-current">1</span>/<span id="outline-total">0</span></span>
+      </button>
+      <nav id="outline-panel" class="outline-panel" aria-label="Article outline" hidden>
+        <div class="outline-panel-header">
+          <div><span data-en="On this page" data-zh="本页大纲">On this page</span><small data-en="Jump to a section" data-zh="快速跳转章节">Jump to a section</small></div>
+          <button id="outline-close" type="button" aria-label="Close outline">×</button>
+        </div>
+        <ol id="outline-list"></ol>
+      </nav>
+    </div>
+
+    <footer class="article-site-footer">
+      <div class="shell"><span>© <span id="year"></span> Jefferson Zhou</span><a href="../about.html" data-en="About the author →" data-zh="关于作者 →">About the author →</a></div>
+    </footer>
+  </body>
+</html>
