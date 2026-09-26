@@ -112,13 +112,25 @@
   const readingProgress = document.querySelector('#reading-progress');
 
   if (outlineToggle && outlinePanel && outlineList) {
+    const outlineControl = outlineToggle.closest('.outline-control');
+    const articleContent = document.querySelector('.article-content');
+    const desktopOutline = window.matchMedia('(min-width: 1100px)');
+    // Keep the sidebar inside the article so it stops at the end of the text.
+    if (outlineControl && articleContent) {
+      const readingLayout = document.createElement('div');
+      readingLayout.className = 'article-reading-layout';
+      articleContent.before(readingLayout);
+      readingLayout.append(outlineControl, articleContent);
+    }
     const outlineSections = [...document.querySelectorAll('[data-outline][id]')];
     const outlineLinks = outlineSections.map((section) => {
       const item = document.createElement('li');
       const link = document.createElement('a');
       link.href = `#${section.id}`;
       link.textContent = section.textContent;
-      if (section.tagName === 'H3') item.classList.add('is-subsection');
+      const depth = Math.max(0, Number(section.tagName.slice(1)) - 2);
+      item.dataset.depth = String(depth);
+      if (depth > 0) item.classList.add('is-subsection');
       item.appendChild(link);
       outlineList.appendChild(item);
       return link;
@@ -127,15 +139,22 @@
     outlineTotal.textContent = String(outlineSections.length);
 
     function setOutlineOpen(isOpen) {
-      outlinePanel.hidden = !isOpen;
-      outlineToggle.setAttribute('aria-expanded', String(isOpen));
-      if (isOpen) outlineClose.focus();
+      const visible = desktopOutline.matches || isOpen;
+      outlinePanel.hidden = !visible;
+      outlineToggle.setAttribute('aria-expanded', String(visible));
+      if (isOpen && !desktopOutline.matches) outlineClose.focus();
     }
+
+    desktopOutline.addEventListener('change', () => setOutlineOpen(false));
+    setOutlineOpen(false);
+    let previousActiveIndex = -1;
 
     function updateOutlineState() {
       let activeIndex = 0;
+      const anchorOffset = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
       outlineSections.forEach((section, index) => {
-        if (section.getBoundingClientRect().top <= 180) activeIndex = index;
+        const headingOffset = parseFloat(getComputedStyle(section).scrollMarginTop) || 0;
+        if (section.getBoundingClientRect().top <= Math.max(180, anchorOffset + headingOffset + 2)) activeIndex = index;
       });
 
       outlineLinks.forEach((link, index) => {
@@ -145,6 +164,17 @@
       });
 
       outlineCurrent.textContent = String(activeIndex + 1);
+
+      if (desktopOutline.matches && activeIndex !== previousActiveIndex) {
+        const activeLink = outlineLinks[activeIndex];
+        if (activeLink) {
+          const panelRect = outlinePanel.getBoundingClientRect();
+          const linkRect = activeLink.getBoundingClientRect();
+          if (linkRect.bottom > panelRect.bottom) outlinePanel.scrollTop += linkRect.bottom - panelRect.bottom + 12;
+          else if (linkRect.top < panelRect.top + 44) outlinePanel.scrollTop -= panelRect.top + 44 - linkRect.top;
+        }
+      }
+      previousActiveIndex = activeIndex;
 
       if (readingProgress) {
         const available = document.documentElement.scrollHeight - window.innerHeight;
@@ -167,11 +197,11 @@
     });
 
     document.addEventListener('click', (event) => {
-      if (!outlinePanel.hidden && !event.target.closest('.outline-control')) setOutlineOpen(false);
+      if (!desktopOutline.matches && !outlinePanel.hidden && !event.target.closest('.outline-control')) setOutlineOpen(false);
     });
 
     document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape' && !outlinePanel.hidden) {
+      if (event.key === 'Escape' && !desktopOutline.matches && !outlinePanel.hidden) {
         setOutlineOpen(false);
         outlineToggle.focus();
       }
