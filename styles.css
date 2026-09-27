@@ -204,6 +204,7 @@ a {
   font-weight: 400;
   line-height: 1.1;
   letter-spacing: -0.035em;
+  text-wrap: balance;
 }
 
 .home-deck {
@@ -335,14 +336,6 @@ a {
   transform: scale(1.025);
 }
 
-.featured-thumbnail figcaption {
-  margin-top: 5px;
-  color: var(--muted);
-  font-family: var(--serif);
-  font-size: 10px;
-  text-align: right;
-}
-
 .featured-cover,
 .article-header-cover {
   min-width: 0;
@@ -374,7 +367,6 @@ a {
   transform: scale(1.025);
 }
 
-.featured-cover figcaption,
 .article-header-cover figcaption {
   margin-top: 7px;
   color: var(--muted);
