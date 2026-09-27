@@ -86,6 +86,30 @@ a {
   gap: 28px;
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  white-space: nowrap;
+}
+
+.header-github {
+  padding: 5px 1px;
+  border-bottom: 1px solid var(--ink);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.03em;
+  text-decoration: none;
+  transition: color 160ms ease, border-color 160ms ease;
+}
+
+.header-github:hover,
+.header-github:focus-visible {
+  border-color: var(--accent-hover);
+  color: var(--accent-hover);
+}
+
 .wordmark {
   display: inline-flex;
   align-items: center;
@@ -428,10 +452,6 @@ a {
 .blog-row-time {
   justify-self: end;
   color: var(--muted);
-}
-
-.home-footer {
-  margin-top: 0;
 }
 
 /* Long-form article */
