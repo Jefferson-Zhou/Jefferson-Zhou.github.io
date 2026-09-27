@@ -204,7 +204,7 @@ T_prefill,compute ≈ T_prefill,linear + T_prefill,attention
           <p>Agrawal等人用下图对比了这组取舍。vllm 和 orca 都优先让新 Prefill 加入执行：vllm 暂时不运行已有 Decode，orca 把 Decode 与完整 Prefill 混合，但较长的迭代仍会推迟输出。<a href="https://github.com/NVIDIA/FasterTransformer">FasterTransformer</a> 优先完成已有 Decode，新请求则长时间等不到 Prefill。Sarathi-Serve 把长 Prefill 拆开，与 Decode 交错安排，从而进一步限制了每轮要执行的工作量。<sup class="citation"><a id="cite-1-8" href="#ref-1" aria-label="跳转到参考文献 1">[1]</a></sup></p>
           <figure class="article-figure">
           <img src="../assets/articles/llm-inference-scheduling/sarathi-serve-fig7.png" width="2200" height="1324" alt="Sarathi-Serve 对比 Prefill 优先、Decode 优先和分块混合执行的时间线" loading="lazy" />
-          <figcaption><em>图 5｜不同调度策略把等待放在了哪里。原图来自 Agrawal et al., “Sarathi-Serve”，OSDI 2024，Figure 7</em><sup class="citation"><a id="cite-1-9" href="#ref-1" aria-label="跳转到参考文献 1">[1]</a></sup></figcaption>
+          <figcaption><em>不同调度策略把等待放在了哪里。原图来自 Agrawal et al., “Sarathi-Serve”，OSDI 2024，Figure 7</em><sup class="citation"><a id="cite-1-9" href="#ref-1" aria-label="跳转到参考文献 1">[1]</a></sup></figcaption>
           </figure>
 
 
