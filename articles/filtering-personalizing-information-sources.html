@@ -10,8 +10,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&amp;family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&amp;display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="../styles.css?v=20260927-5" />
-    <script src="../main.js?v=20260926-1" defer></script>
+    <link rel="preload" as="image" href="../assets/covers/abstract-geometry.webp" fetchpriority="high" />
+    <link rel="stylesheet" href="../styles.css?v=20260927-6" />
+    <script src="../main.js?v=20260927-1" defer></script>
   </head>
   <body data-page="article" data-article-language="en" data-language-url-zh="filter-personal-information.html">
     <div id="reading-progress" aria-hidden="true"></div>
@@ -54,7 +55,7 @@
             </p>
           </div>
           <figure class="article-header-cover">
-            <img src="../assets/covers/abstract-geometry.jpg" width="1400" height="2100" alt="" fetchpriority="high" />
+            <img src="../assets/covers/abstract-geometry.webp" width="1400" height="2100" alt="" fetchpriority="high" />
             <figcaption><a href="https://unsplash.com/photos/tnydtQWIr0c" target="_blank" rel="noopener noreferrer">Pawel Czerwinski / Unsplash</a></figcaption>
           </figure>
         </header>
@@ -71,14 +72,14 @@
 
             <p>In 2017, the Stanford History Education Group released a study that was later formally published in 2019.<sup class="citation"><a id="cite-1" href="#ref-1" aria-label="Jump to reference 1">[1]</a></sup> It compared how professional fact-checkers, historians, and Stanford undergraduates assessed the credibility of online information. The result was slightly counterintuitive: fact-checkers read less, yet reached better conclusions more quickly. Many of the historians and students were influenced by the <a href="https://doi.org/10.1126/science.185.4157.1124" target="_blank" rel="noreferrer">representativeness heuristic</a>, judging a website’s credibility from cues such as a professional appearance, an institutional-sounding name, or a list of references. The crucial difference was that fact-checkers quickly left the original website to investigate its background elsewhere—a practice known as “lateral reading.” Historians and students were more likely to remain on the site, reading its articles, references, and About Us page closely—a practice known as “vertical reading.”<sup class="citation"><a id="cite-2" href="#ref-2" aria-label="Jump to reference 2">[2]</a></sup></p>
 
-            <details class="research-example">
+            <details class="research-example" open>
               <summary>The study offers a concrete example:<span class="research-example-arrow" aria-hidden="true">→</span></summary>
               <div class="research-example-body">
                 <p>Participants were asked to assess the credibility of minimumwage.com. On the surface, the site appeared to be backed by the Employment Policy Institute (EPI), which described itself as a “nonpartisan, nonprofit research organization.” In fact, both EPI and minimumwage.com were connected to Berman and Company, a public-relations firm representing the interests of the restaurant and hotel industries.</p>
 
                 <p><strong>The fact-checkers</strong> read laterally. They quickly left the site, opened several tabs, and used Google, SourceWatch, news reports, and other third-party sources to investigate both the website and EPI. They spent relatively little time reading the site itself and actively cross-checked what they found.</p>
                 <figure class="article-figure">
-                  <img src="../assets/articles/filter-personal-information/fact-checker-browsing-pattern.png" width="1336" height="532" alt="Fact-checkers using several external sources for lateral reading" loading="lazy" />
+                  <img src="../assets/articles/filter-personal-information/fact-checker-browsing-pattern.webp" width="1336" height="532" alt="Fact-checkers using several external sources for lateral reading" loading="eager" decoding="async" />
                   <figcaption>Fact-checkers’ lateral-reading path.</figcaption>
                 </figure>
 
@@ -87,8 +88,8 @@
                 <p><strong>Most of the students</strong> either read vertically or browsed the site casually. They clicked on attention-grabbing features such as maps and statistics instead of investigating the organizations and funding behind the site, and they lacked a clear strategy for verifying the information.</p>
 
                 <figure class="article-figure stacked-table-figure">
-                  <img src="../assets/articles/filter-personal-information/historian-browsing-pattern.png" width="1234" height="172" alt="Header portion of the historians and students browsing-path table" loading="lazy" />
-                  <img src="../assets/articles/filter-personal-information/student-browsing-pattern.png" width="1234" height="866" alt="Main portion of the historians and students browsing-path table" loading="lazy" />
+                  <img src="../assets/articles/filter-personal-information/historian-browsing-pattern.webp" width="1234" height="172" alt="Header portion of the historians and students browsing-path table" loading="eager" decoding="async" />
+                  <img src="../assets/articles/filter-personal-information/student-browsing-pattern.webp" width="1234" height="866" alt="Main portion of the historians and students browsing-path table" loading="eager" decoding="async" />
                 </figure>
               </div>
             </details>

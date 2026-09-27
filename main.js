@@ -122,6 +122,50 @@
       articleContent.before(readingLayout);
       readingLayout.append(outlineControl, articleContent);
     }
+
+    // Retain each note next to its source in the DOM; only its visual position
+    // moves into the right margin on wide screens. Citations keep their IDs.
+    const marginNotes = [...articleContent.querySelectorAll('.article-note')].map((note) => {
+      const context = note.previousElementSibling;
+      const anchor = document.createElement('div');
+      anchor.className = 'article-note-anchor';
+      note.before(anchor);
+      anchor.append(note);
+      return { note, anchor, context };
+    });
+    const wideNotes = window.matchMedia('(min-width: 1280px)');
+    let notesFrame;
+
+    function positionMarginNotes() {
+      let previousBottom = -Infinity;
+      marginNotes.forEach(({ note, anchor, context }) => {
+        if (!wideNotes.matches) {
+          anchor.style.removeProperty('--note-offset');
+          return;
+        }
+        const anchorTop = anchor.getBoundingClientRect().top;
+        const contextTop = context ? context.getBoundingClientRect().top : anchorTop;
+        const top = Math.max(contextTop, previousBottom + 24);
+        anchor.style.setProperty('--note-offset', `${top - anchorTop}px`);
+        previousBottom = top + note.offsetHeight;
+      });
+    }
+
+    function scheduleMarginNotes() {
+      cancelAnimationFrame(notesFrame);
+      notesFrame = requestAnimationFrame(positionMarginNotes);
+    }
+
+    // Font loading, images, and expandable examples can change anchor heights.
+    const notesResize = new ResizeObserver(scheduleMarginNotes);
+    notesResize.observe(articleContent);
+    marginNotes.forEach(({ note }) => notesResize.observe(note));
+    articleContent.addEventListener('load', scheduleMarginNotes, true);
+    articleContent.addEventListener('toggle', scheduleMarginNotes, true);
+    window.addEventListener('resize', scheduleMarginNotes);
+    wideNotes.addEventListener('change', scheduleMarginNotes);
+    document.fonts.ready.then(scheduleMarginNotes);
+    scheduleMarginNotes();
     const outlineSections = [...document.querySelectorAll('[data-outline][id]')];
     const outlineLinks = outlineSections.map((section) => {
       const item = document.createElement('li');

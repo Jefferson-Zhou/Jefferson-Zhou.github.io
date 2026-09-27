@@ -36,6 +36,10 @@ The article header uses `.article-header-copy` for the breadcrumb, title, subtit
 
 The reading column is centered independently of the left outline. On desktop the outline stays short and scrollable with its scrollbar hidden; narrow screens use the Outline Popover. Shared typography and spacing live in `../styles.css`, so do not add per-article layout overrides.
 
+Use the normal `.article-note` markup beside its related paragraph or figure. `main.js` places these notes in the right margin on screens at least 1280px wide, aligning them with the preceding block and preventing overlap. Narrow screens and printing retain inline notes; do not duplicate note text or citation IDs in a separate sidebar.
+
+For fast article entry, use `loading="eager" decoding="async"` on content images and preload the decorative cover in the document head. Prefer lossless WebP copies for research figures, retain their original assets, and preserve `alt`, `width`, and `height`. The Chinese and English information-filtering examples both use `<details class="research-example" open>`.
+
 - Lead paragraph: `<p class="article-lead">...</p>`
 - Section summary: `<p class="section-deck">...</p>`
 - Callout: `<aside class="article-note"><p>...</p></aside>`

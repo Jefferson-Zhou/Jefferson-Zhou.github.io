@@ -11,8 +11,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&amp;family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&amp;display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="../styles.css?v=20260927-5" />
-    <script src="../main.js?v=20260926-1" defer></script>
+    <link rel="preload" as="image" href="../assets/covers/abstract-geometry.webp" fetchpriority="high" />
+    <link rel="stylesheet" href="../styles.css?v=20260927-6" />
+    <script src="../main.js?v=20260927-1" defer></script>
   </head>
   <body data-page="article" data-article-language="zh" data-language-url-en="../index.html">
     <div id="reading-progress" aria-hidden="true"></div>
@@ -55,7 +56,7 @@
             </p>
           </div>
           <figure class="article-header-cover">
-            <img src="../assets/covers/abstract-geometry.jpg" width="1400" height="2100" alt="" fetchpriority="high" />
+            <img src="../assets/covers/abstract-geometry.webp" width="1400" height="2100" alt="" fetchpriority="high" />
             <figcaption><a href="https://unsplash.com/photos/tnydtQWIr0c" target="_blank" rel="noopener noreferrer">Pawel Czerwinski / Unsplash</a></figcaption>
           </figure>
         </header>
@@ -112,7 +113,7 @@ T_prefill,compute ≈ T_prefill,linear + T_prefill,attention
           <h3 id="section-1-2" data-outline>1.2 推理性能指标：延迟与吞吐量</h3>
           <p>衡量 LLM 在线推理效率，需要同时关注<strong>请求延迟</strong>和<strong>服务吞吐量</strong>：前者描述响应与生成过程中的等待，后者描述系统在单位时间内完成的工作量。<sup class="citation"><a id="cite-4" href="#ref-4" aria-label="跳转到参考文献 4">[4]</a></sup><sup class="citation"><a id="cite-5" href="#ref-5" aria-label="跳转到参考文献 5">[5]</a></sup></p>
           <figure class="article-figure">
-          <img src="../assets/articles/llm-inference-scheduling/inference-metrics-excalidraw-20260926.svg" width="756" height="324" alt="作者绘制的 LLM 推理时间线：请求等待、Prefill、Decode 与用户接收输出的位置，标注 TTFT、ITL 和 E2EL" loading="lazy" />
+          <img src="../assets/articles/llm-inference-scheduling/inference-metrics-excalidraw-20260926.svg" width="756" height="324" alt="作者绘制的 LLM 推理时间线：请求等待、Prefill、Decode 与用户接收输出的位置，标注 TTFT、ITL 和 E2EL" loading="eager" decoding="async" />
           </figure>
 
 
@@ -166,7 +167,7 @@ T_prefill,compute ≈ T_prefill,linear + T_prefill,attention
           <h3 id="section-2-1" data-outline>2.1 Orca 的迭代级调度流程</h3>
           <p>先考虑一种简单的请求级批处理：选定一组请求后，等这一组全部完成，再接纳下一组。各请求的输出长度通常不同。即使较短的请求已经结束，空出的容量也不能及时交给新请求。如果 A 仍在生成，新到达的 B、C 就可能一直等在批次之外。<sup class="citation"><a id="cite-1-5" href="#ref-1" aria-label="跳转到参考文献 1">[1]</a></sup>为说明同批请求的长短差异，我们额外加入一个短请求 D。假设每批最多接纳 2 个请求，A、D 已经完成 Prefill，分别还需要 4 次和 2 次 Decode。B 在第 2 轮前到达，C 在第 3 轮前到达。</p>
           <figure class="article-figure">
-          <img src="../assets/articles/llm-inference-scheduling/fixed-batch.svg" width="2438" height="1087" alt="固定批次先运行 A 与 D，D 提前结束后无法补入新请求；B、C 等待 A 完成后才进入下一批" loading="lazy" />
+          <img src="../assets/articles/llm-inference-scheduling/fixed-batch.svg" width="2438" height="1087" alt="固定批次先运行 A 与 D，D 提前结束后无法补入新请求；B、C 等待 A 完成后才进入下一批" loading="eager" decoding="async" />
           </figure>
 
 
@@ -174,7 +175,7 @@ T_prefill,compute ≈ T_prefill,linear + T_prefill,attention
           <p>这里限制 B、C 的，是<strong>只有整批结束后才能重新选择请求</strong>这一规则。Orca 把这个决策时机提前到每次迭代结束后：引擎执行一轮，就将结果交回调度器，由调度器重新组织下一轮的批次。<sup class="citation"><a id="cite-7" href="#ref-7" aria-label="跳转到参考文献 7">[7]</a></sup></p>
           <p>orca的系统设计如下。请求经 Endpoint 进入请求池，Scheduler 从池中选择本轮批次，Execution Engine 执行一轮后将生成结果交回调度器。</p>
           <figure class="article-figure">
-          <img src="../assets/articles/llm-inference-scheduling/orca-fig4.png" width="2200" height="1184" alt="Orca 系统中 Endpoint、请求池、调度器与执行引擎的关系，以及每次迭代的请求选择、批次提交、执行与结果返回" loading="lazy" />
+          <img src="../assets/articles/llm-inference-scheduling/orca-fig4.webp" width="2200" height="1184" alt="Orca 系统中 Endpoint、请求池、调度器与执行引擎的关系，以及每次迭代的请求选择、批次提交、执行与结果返回" loading="eager" decoding="async" />
           <figcaption><em>Orca 的系统结构与迭代级交互。原图来自 Yu et al., “Orca”，OSDI 2022，Figure 4</em><sup class="citation"><a id="cite-7-2" href="#ref-7" aria-label="跳转到参考文献 7">[7]</a></sup></figcaption>
           </figure>
 
@@ -188,7 +189,7 @@ T_prefill,compute ≈ T_prefill,linear + T_prefill,attention
           </ol>
           <p>重新组批不会重新计算整个上下文。KV 由执行引擎按请求保存，跨轮复用。调度器与引擎之间交接的是本轮 token、请求标识和执行位置等信息。即使一个请求下一轮与不同的请求组成批次，它仍沿着自己的 KV 状态继续生成。<sup class="citation"><a id="cite-7-4" href="#ref-7" aria-label="跳转到参考文献 7">[7]</a></sup>简易流程如下：</p>
           <figure class="article-figure">
-          <img src="../assets/articles/llm-inference-scheduling/orca_iteration.svg" width="2136" height="896" alt="Orca 每轮重新选批次：D 在第 2 轮完成，B 在第 3 轮加入；A 在第 4 轮完成，C 在第 5 轮加入；同一轮可包含 Decode 与完整 Prefill" loading="lazy" />
+          <img src="../assets/articles/llm-inference-scheduling/orca_iteration.svg" width="2136" height="896" alt="Orca 每轮重新选批次：D 在第 2 轮完成，B 在第 3 轮加入；A 在第 4 轮完成，C 在第 5 轮加入；同一轮可包含 Decode 与完整 Prefill" loading="eager" decoding="async" />
           </figure>
 
 
@@ -209,7 +210,7 @@ T_prefill,compute ≈ T_prefill,linear + T_prefill,attention
           <p>反过来，如果一直优先已有的 Decode，等它们结束后才运行新的 Prefill，B、C 的首 token 就会被推迟。与此同时，已有请求不断退出，Decode 批次还可能越来越小，削弱批处理带来的效率。<sup class="citation"><a id="cite-1-7" href="#ref-1" aria-label="跳转到参考文献 1">[1]</a></sup></p>
           <p>Agrawal等人用下图对比了这组取舍。vllm 和 orca 都优先让新 Prefill 加入执行：vllm 暂时不运行已有 Decode，orca 把 Decode 与完整 Prefill 混合，但较长的迭代仍会推迟输出。<a href="https://github.com/NVIDIA/FasterTransformer">FasterTransformer</a> 优先完成已有 Decode，新请求则长时间等不到 Prefill。Sarathi-Serve 把长 Prefill 拆开，与 Decode 交错安排，从而进一步限制了每轮要执行的工作量。<sup class="citation"><a id="cite-1-8" href="#ref-1" aria-label="跳转到参考文献 1">[1]</a></sup></p>
           <figure class="article-figure">
-          <img src="../assets/articles/llm-inference-scheduling/sarathi-serve-fig7.png" width="2200" height="1324" alt="Sarathi-Serve 对比 Prefill 优先、Decode 优先和分块混合执行的时间线" loading="lazy" />
+          <img src="../assets/articles/llm-inference-scheduling/sarathi-serve-fig7.webp" width="2200" height="1324" alt="Sarathi-Serve 对比 Prefill 优先、Decode 优先和分块混合执行的时间线" loading="eager" decoding="async" />
           <figcaption><em>不同调度策略把等待放在了哪里。原图来自 Agrawal et al., “Sarathi-Serve”，OSDI 2024，Figure 7</em><sup class="citation"><a id="cite-1-9" href="#ref-1" aria-label="跳转到参考文献 1">[1]</a></sup></figcaption>
           </figure>
 
@@ -224,7 +225,7 @@ T_prefill,compute ≈ T_prefill,linear + T_prefill,attention
           <p>SARATHI 的单层实验给出了一个具体例子。Prefill 阶段最大吞吐量会受输入长度影响。一块输入只要包含足够的 token，就有可能保持较高的执行效率，继续加长输入未必能提高每 token 的处理速度。而 Decode 的吞吐量随批次增大而提高，相同批次下，较长的历史上下文会降低吞吐量。<sup class="citation"><a id="cite-2-3" href="#ref-2" aria-label="跳转到参考文献 2">[2]</a></sup></p>
           <p><strong>算术强度</strong>表示每读写一字节数据所进行的浮点运算量。小批次 Decode 的算术强度明显低于 Prefill，这有助于解释两阶段对计算与带宽的不同需求。<sup class="citation"><a id="cite-2-4" href="#ref-2" aria-label="跳转到参考文献 2">[2]</a></sup><sup class="citation"><a id="cite-3-2" href="#ref-3" aria-label="跳转到参考文献 3">[3]</a></sup></p>
           <figure class="article-figure">
-          <img src="../assets/articles/llm-inference-scheduling/sarathi-2023-fig4.png" width="2200" height="1992" alt="SARATHI 展示序列长度与批次大小对 Prefill、Decode 吞吐量和算术强度的影响" loading="lazy" />
+          <img src="../assets/articles/llm-inference-scheduling/sarathi-2023-fig4.webp" width="2200" height="1992" alt="SARATHI 展示序列长度与批次大小对 Prefill、Decode 吞吐量和算术强度的影响" loading="eager" decoding="async" />
           <figcaption><em>序列长度与批次大小对执行效率的影响。原图来自 Agrawal et al., “SARATHI”，2023，Figure 4</em><sup class="citation"><a id="cite-2-5" href="#ref-2" aria-label="跳转到参考文献 2">[2]</a></sup></figcaption>
           </figure>
 
@@ -273,7 +274,7 @@ T_prefill,compute ≈ T_prefill,linear + T_prefill,attention
           <h3 id="section-4-1" data-outline>4.1 完整 Prefill 与分块 Prefill 的耗时对比</h3>
           <p>Sarathi-Serve 的 <em>stall-free</em> 描述的是一种调度属性：不再为了单独执行完整 Prefill，而让运行中的 Decode 长时间失去推进机会。它并不保证混合批次与纯 Decode 批次一样快。<sup class="citation"><a id="cite-1-16" href="#ref-1" aria-label="跳转到参考文献 1">[1]</a></sup></p>
           <figure class="article-figure">
-          <img src="../assets/articles/llm-inference-scheduling/sarathi-serve-fig9.png" width="2200" height="1052" alt="Sarathi-Serve 比较纯 Decode、Decode 加分块 Prefill、Decode 加完整 Prefill 的批次耗时" loading="lazy" />
+          <img src="../assets/articles/llm-inference-scheduling/sarathi-serve-fig9.webp" width="2200" height="1052" alt="Sarathi-Serve 比较纯 Decode、Decode 加分块 Prefill、Decode 加完整 Prefill 的批次耗时" loading="eager" decoding="async" />
           <figcaption><em>把 Prefill 加入 Decode 批次的增量成本。原图来自 Agrawal et al., “Sarathi-Serve”，OSDI 2024，Figure 9</em><sup class="citation"><a id="cite-1-17" href="#ref-1" aria-label="跳转到参考文献 1">[1]</a></sup></figcaption>
           </figure>
 
