@@ -94,20 +94,31 @@ a {
 }
 
 .header-github {
-  padding: 5px 1px;
-  border-bottom: 1px solid var(--ink);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
   color: var(--ink);
-  font-family: var(--mono);
-  font-size: 12px;
-  letter-spacing: 0.03em;
   text-decoration: none;
-  transition: color 160ms ease, border-color 160ms ease;
+  transition: color 160ms ease;
+}
+
+.header-github svg {
+  display: block;
+  width: 20px;
+  height: 20px;
 }
 
 .header-github:hover,
 .header-github:focus-visible {
-  border-color: var(--accent-hover);
   color: var(--accent-hover);
+}
+
+.header-github:focus-visible {
+  outline: 2px solid var(--accent-hover);
+  outline-offset: 3px;
 }
 
 .wordmark {
