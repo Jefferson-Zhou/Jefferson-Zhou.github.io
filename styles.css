@@ -995,10 +995,15 @@ a {
   width: min(350px, calc(100vw - 40px));
   max-height: calc(100vh - 130px);
   overflow-y: auto;
+  scrollbar-width: none;
   border: 1px solid var(--rule);
   background: rgba(245, 242, 234, 0.98);
   box-shadow: 0 18px 46px rgba(23, 34, 43, 0.14);
   backdrop-filter: blur(12px);
+}
+
+.outline-panel::-webkit-scrollbar {
+  display: none;
 }
 
 .outline-panel-header {
@@ -1114,9 +1119,9 @@ a {
     inset: auto;
     top: 100px;
     width: 100%;
-    max-height: calc(100dvh - 124px);
+    /* Leave the lower half of the sidebar available for future content. */
+    max-height: min(420px, 50dvh);
     overscroll-behavior: contain;
-    scrollbar-width: thin;
     border: 0;
     background: transparent;
     box-shadow: none;
