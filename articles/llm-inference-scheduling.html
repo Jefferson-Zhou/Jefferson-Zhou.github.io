@@ -209,7 +209,9 @@ T_prefill,compute ≈ T_prefill,linear + T_prefill,attention
 
 
 
-          <p>注：vLLM 0.5.2 已提供可选的 chunked prefill，启用后优先调度 Decode。<sup class="citation"><a id="cite-8" href="#ref-8" aria-label="跳转到参考文献 8">[8]</a></sup> V1 在支持时默认启用这一机制。<sup class="citation"><a id="cite-9" href="#ref-9" aria-label="跳转到参考文献 9">[9]</a></sup></p>
+          <aside class="article-note">
+            <p>注：vLLM 0.5.2 已提供可选的 chunked prefill，启用后优先调度 Decode。<sup class="citation"><a id="cite-8" href="#ref-8" aria-label="跳转到参考文献 8">[8]</a></sup> V1 在支持时默认启用这一机制。<sup class="citation"><a id="cite-9" href="#ref-9" aria-label="跳转到参考文献 9">[9]</a></sup></p>
+          </aside>
           <h3 id="section-3-2" data-outline>3.2 分块 Prefill 与 Decode 的混合执行</h3>
           <p>Chunked prefill 把长输入的计算分散到多次迭代。对于因果 Attention，后续输入位置仍要使用前面位置的状态：完成一块后保留其 KV，下一块在这些状态上继续计算。切分的是执行过程，输入仍然属于同一个上下文。只有最后一块完成后，才具备产生该提示词首个输出的完整计算结果。<sup class="citation"><a id="cite-1-10" href="#ref-1" aria-label="跳转到参考文献 1">[1]</a></sup><sup class="citation"><a id="cite-2-2" href="#ref-2" aria-label="跳转到参考文献 2">[2]</a></sup></p>
           <p>这种切分为什么能与 Decode 配合？小批次 Decode 常常受访存限制，计算单元还有余量，插入适量 Prefill token，可以增加同一轮中的有效计算。Prefill 达到一定规模后，已经能够较好地利用计算资源，未必需要一次处理整段长输入才能保持效率。分块由此提供了一个调节空间：在维持计算效率的同时，限制一次迭代的时长。<sup class="citation"><a id="cite-1-11" href="#ref-1" aria-label="跳转到参考文献 1">[1]</a></sup></p>
@@ -272,7 +274,9 @@ T_prefill,compute ≈ T_prefill,linear + T_prefill,attention
 
 
           <p>对比纯 Decode，加入分块 Prefill，加入完整 Prefill三种策略下不同上下文长度和批次大小的<strong>批次执行时间</strong>。可以看出，完整 Prefill 将批次时间提高到纯 Decode 的约 20.3 倍，分块后的对应值约为 2.0 倍。表明“限制插入的 Prefill 工作量可以显著减轻干扰”，同时也表明额外成本没有消失。<sup class="citation"><a id="cite-1-18" href="#ref-1" aria-label="跳转到参考文献 1">[1]</a></sup></p>
-          <p>注：要判断在线服务改善了多少，还需测量请求的排队、TTFT、生成间隔及其尾部，不能从单个批次耗时直接推导整个系统的服务容量。</p>
+          <aside class="article-note">
+            <p>注：要判断在线服务改善了多少，还需测量请求的排队、TTFT、生成间隔及其尾部，不能从单个批次耗时直接推导整个系统的服务容量。</p>
+          </aside>
           <h3 id="section-4-2" data-outline>4.2 块大小与 token 预算的选择依据</h3>
           <p>把块缩小，通常可以限制单轮加入的 Prefill 工作，更容易控制对 Decode 的干扰。但同一个输入需要经过更多轮，首 token 的完成时间也更容易受到跨轮排队影响。计算过于零散时，kernel 启动、调度与较低的计算利用率可能变得显著，后续块还需要访问先前的 KV。<sup class="citation"><a id="cite-1-19" href="#ref-1" aria-label="跳转到参考文献 1">[1]</a></sup><sup class="citation"><a id="cite-2-9" href="#ref-2" aria-label="跳转到参考文献 2">[2]</a></sup></p>
           <p>增大块，则可能提高 Prefill 的推进速度与执行效率，但混合批次会更重，正在 Decode 的请求更容易经历较长间隔。合适的预算取决于当前受约束的目标：严格的生成间隔要求会限制每轮可插入多少工作，较紧的首 token 目标则要求为等待中的 Prefill 保留足够服务能力。<sup class="citation"><a id="cite-1-20" href="#ref-1" aria-label="跳转到参考文献 1">[1]</a></sup></p>
