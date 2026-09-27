@@ -10,6 +10,7 @@ Use `_template.html` as the source for every new article. Keep the finished arti
 4. Store images under `../assets/articles/<article-slug>/` and always add descriptive `alt`, `width`, and `height` attributes.
 5. Update both the featured card and writing list in `../index.html` if the article should appear in both places.
    Keep published entries in descending **first-publication** order, not last-update order. Add `data-published="YYYY-MM-DD"` to each card and writing row, and show the original date. Update adjacent-article navigation chronologically as well.
+   In the writing list, put each row inside the matching `.blog-year-group`. For a new year, add a group with `data-year="YYYY"` and a `.blog-year-title` heading; keep groups newest first. Topic filters hide empty year groups automatically.
 6. Preview the page at desktop and mobile widths. Test the outline, menu, language control, internal links, and horizontal overflow.
 
 ## Path rules

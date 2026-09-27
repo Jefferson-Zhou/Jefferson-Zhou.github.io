@@ -90,6 +90,7 @@
   // Blog home: topic filters.
   const filterButtons = [...document.querySelectorAll('[data-filter]')];
   const blogRows = [...document.querySelectorAll('.blog-row[data-category]')];
+  const blogYearGroups = [...document.querySelectorAll('.blog-year-group')];
 
   filterButtons.forEach((button) => {
     button.addEventListener('click', () => {
@@ -98,6 +99,9 @@
       blogRows.forEach((row) => {
         const categories = row.dataset.category.split(' ');
         row.hidden = selected !== 'all' && !categories.includes(selected);
+      });
+      blogYearGroups.forEach((group) => {
+        group.hidden = !group.querySelector('.blog-row:not([hidden])');
       });
     });
   });
