@@ -1,12 +1,13 @@
 :root {
-  --paper: #f5f2ea;
-  --paper-deep: #ece6da;
-  --ink: #17222b;
-  --muted: #667078;
-  --rule: #cbc4b7;
-  --accent: #944a39;
-  --accent-dark: #6e3226;
-  --accent-hover: #a85f4c;
+  color-scheme: light;
+  --paper: #ffffff;
+  --paper-deep: #f6f7f9;
+  --ink: #1f2933;
+  --muted: #64707d;
+  --rule: #dfe3e8;
+  --accent: #4b5563;
+  --accent-dark: #374151;
+  --accent-hover: #6b7280;
   --serif: "Source Serif 4", Georgia, serif;
   --mono: "DM Mono", "SFMono-Regular", Consolas, monospace;
   --shell: min(1120px, calc(100vw - 48px));
@@ -38,7 +39,7 @@ a {
 }
 
 a:hover {
-  color: var(--accent);
+  color: var(--accent-hover);
 }
 
 button,
@@ -72,7 +73,7 @@ a {
   position: sticky;
   top: 0;
   z-index: 20;
-  background: rgba(245, 242, 234, 0.95);
+  background: rgba(255, 255, 255, 0.95);
   border-bottom: 1px solid var(--rule);
   backdrop-filter: blur(10px);
 }
@@ -316,8 +317,8 @@ a {
 
 .featured-post h3 a:hover,
 .blog-row h3 a:hover {
-  color: var(--accent);
-  text-decoration-color: var(--accent);
+  color: var(--accent-hover);
+  text-decoration-color: var(--accent-hover);
 }
 
 .featured-post-main h3 {
@@ -569,7 +570,7 @@ a {
 
 .article-content a {
   color: var(--accent-dark);
-  text-decoration-color: rgba(148, 74, 57, 0.45);
+  text-decoration-color: rgba(75, 85, 99, 0.45);
   text-decoration-thickness: 1px;
   text-underline-offset: 0.16em;
   transition: color 160ms ease, text-decoration-color 160ms ease, text-decoration-thickness 160ms ease;
@@ -681,11 +682,11 @@ a {
 .research-example summary:hover,
 .research-example summary:focus-visible {
   color: var(--accent-hover);
-  background: rgba(168, 95, 76, 0.07);
+  background: rgba(75, 85, 99, 0.07);
 }
 
 .research-example summary:focus-visible {
-  outline: 1px solid rgba(168, 95, 76, 0.4);
+  outline: 1px solid rgba(75, 85, 99, 0.4);
   outline-offset: 2px;
 }
 
@@ -698,7 +699,7 @@ a {
   margin-top: 16px;
   padding: 22px 24px;
   overflow: hidden;
-  border: 1px solid rgba(203, 196, 183, 0.82);
+  border: 1px solid var(--rule);
   border-radius: 14px;
   background: #fff;
   box-shadow: 0 10px 28px rgba(23, 34, 43, 0.05);
@@ -783,8 +784,8 @@ a {
 
 .article-references li:target {
   border-radius: 6px;
-  background: rgba(168, 95, 76, 0.1);
-  outline: 5px solid rgba(168, 95, 76, 0.1);
+  background: rgba(75, 85, 99, 0.08);
+  outline: 5px solid rgba(75, 85, 99, 0.08);
 }
 
 .reference-back {
@@ -892,7 +893,7 @@ a {
 }
 
 .article-content tbody tr:nth-child(even) {
-  background: rgba(235, 230, 219, 0.22);
+  background: #fafbfc;
 }
 
 .article-end {
@@ -968,7 +969,7 @@ a {
   gap: 14px;
   padding: 10px 12px;
   border: 1px solid var(--rule);
-  background: rgba(245, 242, 234, 0.96);
+  background: rgba(255, 255, 255, 0.96);
   color: var(--ink);
   font-family: var(--mono);
   font-size: 10px;
@@ -997,7 +998,7 @@ a {
   overflow-y: auto;
   scrollbar-width: none;
   border: 1px solid var(--rule);
-  background: rgba(245, 242, 234, 0.98);
+  background: rgba(255, 255, 255, 0.98);
   box-shadow: 0 18px 46px rgba(23, 34, 43, 0.14);
   backdrop-filter: blur(12px);
 }
@@ -1279,8 +1280,8 @@ a {
   place-items: center;
   margin-bottom: 22px;
   background-color: var(--paper-deep);
-  background-image: linear-gradient(90deg, transparent 49.5%, rgba(148, 74, 57, 0.16) 50%, transparent 50.5%),
-    linear-gradient(transparent 49.5%, rgba(148, 74, 57, 0.16) 50%, transparent 50.5%);
+  background-image: linear-gradient(90deg, transparent 49.5%, rgba(75, 85, 99, 0.12) 50%, transparent 50.5%),
+    linear-gradient(transparent 49.5%, rgba(75, 85, 99, 0.12) 50%, transparent 50.5%);
   background-size: 52px 52px;
   color: var(--accent);
 }
@@ -1507,8 +1508,9 @@ a {
 
 .site-footer {
   padding: 88px 0 30px;
-  background: var(--ink);
-  color: var(--paper);
+  border-top: 1px solid var(--rule);
+  background: var(--paper);
+  color: var(--ink);
 }
 
 .footer-grid {
@@ -1535,11 +1537,16 @@ a {
 }
 
 .contact-links a {
-  color: var(--paper);
+  color: var(--accent-dark);
+}
+
+.contact-links a:hover,
+.contact-links a:focus-visible {
+  color: var(--accent-hover);
 }
 
 .contact-links .placeholder-link {
-  color: rgba(245, 242, 234, 0.55);
+  color: var(--muted);
   font-family: var(--mono);
   font-size: 12px;
 }
@@ -1550,8 +1557,8 @@ a {
   gap: 24px;
   margin-top: 88px;
   padding-top: 20px;
-  border-top: 1px solid rgba(245, 242, 234, 0.24);
-  color: rgba(245, 242, 234, 0.62);
+  border-top: 1px solid var(--rule);
+  color: var(--muted);
   font-family: var(--mono);
   font-size: 11px;
 }
