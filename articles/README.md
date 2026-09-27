@@ -32,6 +32,10 @@ For a Chinese-only article, mark `data-article-language="zh"` and set `data-lang
 
 ## Useful content blocks
 
+The article header uses `.article-header-copy` for the breadcrumb, title, subtitle, and dates, alongside `.article-header-cover` for decorative artwork. The template already includes this structure. To change its cover, replace the image path and its Unsplash credit together; see `../assets/covers/README.md`. Do not place research figures in this decorative header.
+
+The reading column is centered independently of the left outline. On desktop the outline stays short and scrollable with its scrollbar hidden; narrow screens use the Outline Popover. Shared typography and spacing live in `../styles.css`, so do not add per-article layout overrides.
+
 - Lead paragraph: `<p class="article-lead">...</p>`
 - Section summary: `<p class="section-deck">...</p>`
 - Callout: `<aside class="article-note"><p>...</p></aside>`

@@ -11,7 +11,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&amp;family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&amp;display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="../styles.css?v=20260927-4" />
+    <link rel="stylesheet" href="../styles.css?v=20260927-5" />
     <script src="../main.js?v=20260926-1" defer></script>
   </head>
   <body data-page="article" data-article-language="zh" data-language-url-en="../index.html">
@@ -39,19 +39,25 @@
     <main>
       <article class="article-page" lang="zh-CN">
         <header class="article-header shell">
-          <nav class="article-breadcrumb" aria-label="面包屑">
-            <a href="../index.html" data-en="Writing" data-zh="写作">写作</a>
-            <span aria-hidden="true">/</span>
-            <span>LLM 推理系统</span>
-          </nav>
+          <div class="article-header-copy">
+            <nav class="article-breadcrumb" aria-label="面包屑">
+              <a href="../index.html" data-en="Writing" data-zh="写作">写作</a>
+              <span aria-hidden="true">/</span>
+              <span>LLM 推理系统</span>
+            </nav>
 
-          <p class="eyebrow">研究笔记 · LLM 推理系统</p>
-          <h1>LLM 推理调度：如何兼顾吞吐量与响应延迟</h1>
-          <p class="article-subtitle">从 Prefill 与 Decode 的成本出发，理解连续批处理、KV cache 管理与分块 Prefill 如何影响吞吐量、首 token 延迟和生成节奏。</p>
-          <p class="article-meta">
-            <time datetime="2025-08-18">发布于 2025 年 8 月 18 日</time>
-            <time datetime="2026-08-26">最近更新于 2026 年 8 月 26 日</time>
-          </p>
+            <p class="eyebrow">研究笔记 · LLM 推理系统</p>
+            <h1>LLM 推理调度：如何兼顾吞吐量与响应延迟</h1>
+            <p class="article-subtitle">从 Prefill 与 Decode 的成本出发，理解连续批处理、KV cache 管理与分块 Prefill 如何影响吞吐量、首 token 延迟和生成节奏。</p>
+            <p class="article-meta">
+              <time datetime="2025-08-18">发布于 2025 年 8 月 18 日</time>
+              <time datetime="2026-08-26">最近更新于 2026 年 8 月 26 日</time>
+            </p>
+          </div>
+          <figure class="article-header-cover">
+            <img src="../assets/covers/abstract-geometry.jpg" width="1400" height="2100" alt="" fetchpriority="high" />
+            <figcaption><a href="https://unsplash.com/photos/tnydtQWIr0c" target="_blank" rel="noopener noreferrer">Pawel Czerwinski / Unsplash</a></figcaption>
+          </figure>
         </header>
 
         <div id="article-content" class="article-content">
