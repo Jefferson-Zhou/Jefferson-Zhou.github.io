@@ -28,6 +28,8 @@ Do not move the existing root-level `article.html`; it is the first hand-formatt
 
 Keep each language version as a separate HTML file so long-form article markup is never overwritten by the interface translator. Add `data-article-language` and the counterpart URL to each page's `<body>`, following `../article.html` and `aggregate-your-personal-knowledge.html` as the working example. On the home page, use `data-href-en` and `data-href-zh` so each language opens the matching article.
 
+For a technical article with tables, figures, margin notes, and numbered references, use `llm-inference-scheduling.html` (Chinese) and `llm-inference-scheduling-en.html` (English) as a complete paired example. Both translations retain the same first-publication and update dates, share image assets, and link back to one another.
+
 For a Chinese-only article, mark `data-article-language="zh"` and set `data-language-url-en="../index.html"` so the language button returns to the English writing index without presenting Chinese text as an English translation. Label its English-index link “Chinese”; do not create a placeholder English article.
 
 ## Useful content blocks

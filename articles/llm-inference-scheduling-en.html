@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Starting with Prefill and Decode costs, explore how continuous batching, KV cache management, and chunked Prefill shape throughput, time to first token, and generation latency." />
+    <meta property="article:published_time" content="2025-08-18" />
+    <meta property="article:modified_time" content="2026-08-26" />
+    <meta name="theme-color" content="#ffffff" />
+    <title>LLM Inference Scheduling: How to Balance Throughput and Response Latency — Jefferson Zhou</title>
+    <link rel="alternate" hreflang="zh-CN" href="llm-inference-scheduling.html" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&amp;family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&amp;display=swap" rel="stylesheet" />
+    <link rel="preload" as="image" href="../assets/covers/abstract-blue-ribbons.webp" fetchpriority="high" />
+    <link rel="stylesheet" href="../styles.css?v=20260927-9" />
+    <script src="../main.js?v=20260927-1" defer></script>
+  </head>
+  <body data-page="article" data-article-language="en" data-language-url-zh="llm-inference-scheduling.html">
+    <div id="reading-progress" aria-hidden="true"></div>
+    <a class="skip-link" href="#article-content" data-en="Skip to article" data-zh="跳到正文">Skip to article</a>
+
+    <header class="site-header">
+      <div class="shell header-inner">
+        <a class="wordmark" href="../index.html" aria-label="Jefferson Zhou, home">
+          <span class="wordmark-mark" aria-hidden="true">JZ</span>
+          <span>Jefferson Zhou</span>
+        </a>
+        <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav" data-en="Menu" data-zh="菜单">Menu</button>
+        <nav id="site-nav" class="site-nav" aria-label="Primary navigation">
+          <a href="../index.html" data-en="Home" data-zh="首页">Home</a>
+          <a href="../about.html" data-en="About" data-zh="关于">About</a>
+        </nav>
+        <div class="header-actions">
+          <button class="language-toggle" type="button" aria-label="切换为中文">中文</button>
+          <a class="header-github" href="https://github.com/Jefferson-Zhou" target="_blank" rel="noopener noreferrer" aria-label="Jefferson Zhou on GitHub" title="GitHub"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .297C5.37.297 0 5.67 0 12.297c0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.043-1.61-4.043-1.61-.546-1.387-1.333-1.756-1.333-1.756-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.418-1.305.762-1.605-2.665-.304-5.467-1.334-5.467-5.93 0-1.31.469-2.381 1.236-3.221-.124-.303-.536-1.524.117-3.176 0 0 1.008-.322 3.301 1.23a11.52 11.52 0 0 1 3.003-.404c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.655 1.652.243 2.873.12 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222 0 1.606-.015 2.898-.015 3.293 0 .322.216.694.825.576C20.565 22.092 24 17.592 24 12.297 24 5.67 18.627.297 12 .297Z" /></svg></a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <article class="article-page" lang="en">
+        <header class="article-header shell">
+          <div class="article-header-copy">
+            <nav class="article-breadcrumb" aria-label="Breadcrumb">
+              <a href="../index.html" data-en="Writing" data-zh="写作">Writing</a>
+              <span aria-hidden="true">/</span>
+              <span>LLM inference systems</span>
+            </nav>
+
+            <p class="eyebrow">Research notes · LLM inference systems</p>
+            <h1>LLM Inference Scheduling: How to Balance Throughput and Response Latency</h1>
+            <p class="article-subtitle">Starting with Prefill and Decode costs, explore how continuous batching, KV cache management, and chunked Prefill shape throughput, time to first token, and generation latency.</p>
+            <p class="article-meta">
+              <time datetime="2025-08-18">Published August 18, 2025</time>
+              <time datetime="2026-08-26">Updated August 26, 2026</time>
+            </p>
+          </div>
+          <figure class="article-header-cover">
+            <img src="../assets/covers/abstract-blue-ribbons.webp" width="1400" height="933" alt="" fetchpriority="high" />
+            <figcaption><a href="https://unsplash.com/photos/fZTKBU8OqXk" target="_blank" rel="noopener noreferrer">Pawel Czerwinski / Unsplash</a></figcaption>
+          </figure>
+        </header>
+
+        <div id="article-content" class="article-content">
+          <p><em>Scheduling and resource management in LLM inference systems. Drawing on Orca, PagedAttention, SARATHI, and Sarathi-Serve, this article discusses the trade-off between batching and latency in online serving for autoregressive models.</em></p>
+          <p>Building an online LLM inference service requires balancing two things at the same time: processing new request inputs and continuously generating outputs for existing requests. The former should get enough compute resources as quickly as possible, while the latter needs frequent, steady opportunities to run. When the two types of work share a GPU, prioritizing the long input of a new request may make existing requests wait longer for their next token. Continuously prioritizing existing requests, in turn, extends the wait for new requests.<sup class="citation"><a id="cite-1" href="#ref-1" aria-label="Go to reference 1">[1]</a></sup></p>
+          <p>This tension can be broken down into scheduling problems at two levels: <strong>when a request enters a batch, and how much work it is allowed to process in each iteration.</strong> To assess how these decisions affect the user experience, we first need to understand the respective costs of input processing and step-by-step generation, and distinguish the latency of waiting for the first token from that of waiting for subsequent tokens.</p>
+          <p>The following sections first introduce the basic concepts and performance metrics of LLM inference, then discuss the scheduling mechanisms of continuous batching and chunked Prefill. Later, we use an example in which A is generating, and a long-input request B and a short request C arrive in succession, to show how different scheduling methods affect request waiting times.</p>
+          <section aria-labelledby="section-1">
+          <h2 id="section-1" data-outline>1. Inference Basics: The Costs and Performance Metrics of Two Phases</h2>
+          <h3 id="section-1-1" data-outline>1.1 Prefill and Decode: Compute and Memory-Access Costs</h3>
+          <p>For a typical autoregressive Transformer, <strong>Prefill</strong> processes the input positions in the prompt and builds the Key and Value states needed by Attention at each layer; it also usually produces the first output token after this forward pass. <strong>Decode</strong> then uses the token just generated and the saved KV states to continue predicting subsequent tokens. Because of the autoregressive nature of the model, generation within a single request has sequential dependencies, while the current steps of different requests can be executed together.<sup class="citation"><a id="cite-1-2" href="#ref-1" aria-label="Go to reference 1">[1]</a></sup></p>
+          <p>The KV cache avoids recomputing the Key and Value states for the entire history every time a token is generated by saving states that have already been computed. Subsequent Attention operations must still read these states, however; as the context grows, the KV cache also occupies an increasing amount of GPU memory.<sup class="citation"><a id="cite-2" href="#ref-2" aria-label="Go to reference 2">[2]</a></sup></p>
+          <p>Take the <a href="https://arxiv.org/abs/2305.13245">GQA</a>-based <a href="https://huggingface.co/Qwen/Qwen2.5-32B-Instruct/blob/main/config.json">Qwen2.5-32B-Instruct</a> as an example. It has 64 layers, 8 KV heads per layer, and a head dimension of 128 (a hidden dimension of 5120 / 40 query heads). Assuming that the KV cache is stored in BF16 or FP16, caching one token requires:</p>
+          <pre><code class="language-text">M_KV/token = 2 (Key and Value) × L × H_KV × d × b
+           = 2 × 64 × 8 × 128 × 2 = 262,144 bytes
+           = 256 KiB
+</code></pre>
+          <p>Therefore, when a request caches <strong>8,192 tokens, its KV occupies about 2 GiB; when it caches 32,768 tokens, it occupies about 8 GiB</strong>. If 32 requests are served at the same time, each retaining 8,192 tokens and with no cache shared between requests, the KV data alone requires about 64 GiB. This calculation counts the input and generated tokens already written to the cache. As Decode progresses, the states continue to accumulate, and subsequent Attention operations need to read a longer history.</p>
+          <p>Under the conditions above, consider an <a href="https://www.nvidia.com/en-us/data-center/a100/">NVIDIA A100 80GB SXM</a> and estimate the theoretical time required by the two phases from the hardware peaks. Let the batch size be 1. For ease of estimation, for a model on the 32B scale, approximate the number of parameters involved in linear computation as <code>P = 32 × 10^9</code>, and use the same approximation for the amount of weights read.</p>
+          <p><em>Theoretical Prefill time estimate:</em></p>
+          <p>For linear operations such as projection layers and the FFN, the amount of computation is approximately <code>2PS</code>. Dividing this computation by peak compute gives:<sup class="citation"><a id="cite-3" href="#ref-3" aria-label="Go to reference 3">[3]</a></sup></p>
+          <pre><code class="language-text">T_prefill,linear ≈ 2PS / F_peak
+                 = (2 × 32 × 10^9 × 8,192) / (312 × 10^12)
+                 ≈ 1.68 s
+</code></pre>
+          <p>Causal Attention has <code>S(S+1)/2</code> valid position pairs. If the masked upper triangle is ideally skipped, the two matrix multiplications together require <code>2LH_QdS(S+1)</code> FLOP. Here, <strong>40 query heads</strong> should be used; 8 KV heads are used only when calculating KV storage.</p>
+          <pre><code class="language-text">T_prefill,attention ≈ 2LH_QdS(S+1) / F_peak
+                    = (2 × 64 × 40 × 128 × 8,192 × 8,193)
+                      / (312 × 10^12)
+                    ≈ 0.14 s
+
+T_prefill,compute ≈ T_prefill,linear + T_prefill,attention
+                  ≈ 1.68 + 0.14
+                  ≈ 1.82 s
+</code></pre>
+          <p><em>Theoretical Decode time estimate:</em></p>
+          <p>When the existing context is about 8,192 tokens, a single step processes only one new position, but this position still needs to attend to the historical KV. The linear operations require approximately <code>2P</code> FLOP, while <code>QKᵀ</code> and <code>AV</code> require approximately <code>4LH_QdS</code> FLOP:</p>
+          <pre><code class="language-text">T_decode,compute ≈ (2P + 4LH_QdS) / F_peak
+                 = (2 × 32 × 10^9 + 4 × 64 × 40 × 128 × 8,192)
+                   / (312 × 10^12)
+                 ≈ 0.24 ms
+</code></pre>
+          <p>However, single-request Decode needs to read about 64 GB of weights from GPU memory, as well as the approximately 2 GiB of historical KV calculated above. Assuming that the weights and KV are each read from HBM once per step and that peak bandwidth is achieved, the read time is:</p>
+          <pre><code class="language-text">T_decode,memory ≈ (Pb + S × M_KV/token) / BW
+                = (32 × 10^9 × 2 + 8,192 × 262,144)
+                  / (2,039 × 10^9)
+                ≈ 0.03244 s
+                ≈ 32.4 ms
+</code></pre>
+          <p>Under these ideal conditions, generating <strong>100 output tokens</strong> takes about <strong>5.03 seconds</strong> in total: approximately 1.82 seconds for Prefill and 3.21 seconds for the subsequent 99 Decode steps (with Decode compute time ignored). The first output token is produced by Prefill. Prefill processes 8,192 input positions at once and can more readily form large-scale matrix computations. Ordinary Decode processes only one new position per request at each step, yet it must still read the model weights and historical KV. In this example, the main cost of a single Decode step comes from memory access. This illustrates the typical workload pattern in which long-input Prefill is compute intensive and single-request Decode is memory intensive.</p>
+          <p>It follows that when the two phases share a GPU, the difference between these workload patterns becomes a scheduling problem: processing a new request&#39;s entire long Prefill may delay the next Decode step of existing requests. Continuously prioritizing Decode, in turn, may extend the wait for new requests. The following discussion centers on the tradeoffs of continuous batching and chunked Prefill. Before comparing these mechanisms, we first need to discuss some common metrics for quantifying inference performance.</p>
+          <h3 id="section-1-2" data-outline>1.2 Inference Performance Metrics: Latency and Throughput</h3>
+          <p>Measuring the efficiency of online LLM inference requires attention to both <strong>request latency</strong> and <strong>service throughput</strong>: the former describes waiting during response and generation, while the latter describes the amount of work the system completes per unit of time.<sup class="citation"><a id="cite-4" href="#ref-4" aria-label="Go to reference 4">[4]</a></sup><sup class="citation"><a id="cite-5" href="#ref-5" aria-label="Go to reference 5">[5]</a></sup></p>
+          <figure class="article-figure">
+          <img src="../assets/articles/llm-inference-scheduling/inference-metrics-excalidraw-20260926.svg" width="756" height="324" alt="An author-created LLM inference timeline showing request waiting, Prefill, Decode, and where the user receives outputs, with TTFT, ITL, and E2EL marked" loading="eager" decoding="async" />
+          </figure>
+
+
+
+          <div class="article-table-wrap"><table>
+          <thead>
+          <tr>
+          <th>Metric</th>
+          <th>What it measures and what to observe</th>
+          <th>Main influencing factors</th>
+          </tr>
+          </thead>
+          <tbody><tr>
+          <td>TTFT (Time to First Token)</td>
+          <td>The time from sending a request to receiving the first output token, reflecting how quickly the response begins.</td>
+          <td>Input length determines the amount of Prefill work, while model size, GPU compute, and operator efficiency affect execution time. Concurrency and request arrival rate change queueing time. A prefix-cache hit can reduce repeated input computation.<sup class="citation"><a id="cite-6" href="#ref-6" aria-label="Go to reference 6">[6]</a></sup> Client-side TTFT also includes tokenization, network transmission, and first-token return overhead.</td>
+          </tr>
+          <tr>
+          <td>TPOT (Time per Output Token)</td>
+          <td>The average generation time for a single request after the first token, commonly calculated as <code>(E2EL − TTFT) / (number of output tokens − 1)</code> and applicable only when the number of outputs is greater than 1.</td>
+          <td>Affected by the execution cost of each Decode step and cumulative scheduling waits. The amount of model weights and KV read, GPU memory bandwidth, batch size, and operator efficiency determine the cost of a single step. The context continues to grow during generation, which also changes the time taken by later steps.</td>
+          </tr>
+          <tr>
+          <td>ITL (Inter-Token Latency)</td>
+          <td>The time interval between two adjacent output tokens arriving at the client. For streaming output, both the interval distribution and p95 and p99 should be examined.</td>
+          <td>In addition to the cost of Decode itself, the insertion of a long Prefill, scheduling waits, and resource contention may lengthen some intervals.<sup class="citation"><a id="cite-1-3" href="#ref-1" aria-label="Go to reference 1">[1]</a></sup> Network jitter and response buffering also affect the pace observed by the client.</td>
+          </tr>
+          <tr>
+          <td>E2EL (End-to-End Latency)</td>
+          <td>The total time from sending a request to receiving the final output token, including the wait before the first token and subsequent generation.</td>
+          <td>Input length and queueing affect when the answer begins, while the number of output tokens and Decode speed determine the duration of subsequent generation. Network transmission is also included in the total time.</td>
+          </tr>
+          <tr>
+          <td>Output Token Throughput / TPS</td>
+          <td>The total number of output tokens from all requests within a measurement window divided by the window duration, reflecting the service&#39;s overall generation capacity.</td>
+          <td>Concurrency and batch organization affect GPU utilization, while the input/output length distribution changes the workload of the two phases and KV occupancy. Compute, GPU memory bandwidth, capacity, and scheduling efficiency jointly constrain throughput. Near saturation, increasing concurrency may primarily increase waiting, and higher system-wide TPS does not guarantee that a single request generates faster.</td>
+          </tr>
+          <tr>
+          <td>Request Throughput / RPS</td>
+          <td>The number of successfully completed requests within a measurement window divided by the window duration, reflecting how many requests the service can complete.</td>
+          <td>Affected by the input/output length of each request, the request arrival rate, and the available serving capacity. RPS is easier to increase when there are more short requests.</td>
+          </tr>
+          </tbody></table>
+          </div>
+          <p>In the A, B, and C example, A most directly experiences whether subsequent tokens arrive on time, while B and C first face TTFT. The system also aims to serve more requests with a fixed amount of GPU resources.</p>
+          <p>An SLO (service-level objective) further turns experience requirements into constraints, such as upper limits on the first-token and generation intervals, and the proportion of requests that must meet them. Scheduling optimization therefore needs to answer: under the agreed latency requirements, how much can serving capacity be increased?<sup class="citation"><a id="cite-1-4" href="#ref-1" aria-label="Go to reference 1">[1]</a></sup></p>
+          </section>
+
+          <section aria-labelledby="section-2">
+          <h2 id="section-2" data-outline>2. Continuous Batching: Reselecting Requests Every Iteration</h2>
+          <h3 id="section-2-1" data-outline>2.1 Orca&#39;s Iteration-Level Scheduling Process</h3>
+          <p>First, consider a simple form of request-level batching: after selecting a group of requests, the system waits until the whole group has finished before admitting the next group. Requests usually have different output lengths. Even if a shorter request has already finished, the freed capacity cannot be handed to a new request in time. If A is still generating, newly arrived B and C may keep waiting outside the batch.<sup class="citation"><a id="cite-1-5" href="#ref-1" aria-label="Go to reference 1">[1]</a></sup> To illustrate the differences in request length within the same batch, we add a short request D. Suppose that each batch can admit at most 2 requests; A and D have completed Prefill and respectively need 4 and 2 more Decode steps. B arrives before Round 2, and C arrives before Round 3.</p>
+          <figure class="article-figure">
+          <img src="../assets/articles/llm-inference-scheduling/fixed-batch.svg" width="2438" height="1087" alt="A fixed batch runs A and D first and cannot insert a new request after D finishes early; B and C wait until A finishes before entering the next batch" loading="eager" decoding="async" />
+          </figure>
+
+
+
+          <p>What constrains B and C here is the rule that <strong>requests can be reselected only after the entire batch finishes</strong>. Orca moves this decision point forward to the end of each iteration: the engine executes one iteration and returns the result to the scheduler, which then reorganizes the batch for the next iteration.<sup class="citation"><a id="cite-7" href="#ref-7" aria-label="Go to reference 7">[7]</a></sup></p>
+          <p>Orca&#39;s system design is shown below. Requests enter the request pool through the Endpoint. The Scheduler selects the batch for the current iteration from the pool, and the Execution Engine returns the generated results to the scheduler after executing one iteration.</p>
+          <figure class="article-figure">
+          <img src="../assets/articles/llm-inference-scheduling/orca-fig4.webp" width="2200" height="1184" alt="The relationship among the Endpoint, request pool, scheduler, and execution engine in Orca, along with request selection, batch submission, execution, and result return in each iteration" loading="eager" decoding="async" />
+          <figcaption><em>Orca&#39;s system structure and iteration-level interactions. Original figure from Yu et al., “Orca,” OSDI 2022, Figure 4</em><sup class="citation"><a id="cite-7-2" href="#ref-7" aria-label="Go to reference 7">[7]</a></sup></figcaption>
+          </figure>
+
+
+
+          <p>The gray cells in the request pool represent input tokens, and the white cells represent existing outputs. ①–④ in the figure show request selection, batch submission, one iteration of execution, and result return in sequence. Expanding this interaction to include state processing after the results are returned, the process can be divided into three steps:</p>
+          <ol>
+          <li><strong>Select the next batch of requests.</strong> The scheduler selects the requests to run in the current iteration from the request pool. These can include both unfinished existing requests and new requests awaiting their first execution, and the scheduler sends them to the engine.</li>
+          <li><strong>Execute one iteration of model computation.</strong> The engine runs Prefill or Decode according to each request&#39;s phase, reads and updates its KV, and returns the results generated in this iteration to the scheduler.</li>
+          <li><strong>Update states and select another batch.</strong> Requests that have met their termination conditions exit, and the engine is notified to reclaim their KV. Unfinished requests retain their progress and participate in the next selection together with newly arrived requests. A short request can therefore finish and return first without waiting for a long request in the same batch.<sup class="citation"><a id="cite-7-3" href="#ref-7" aria-label="Go to reference 7">[7]</a></sup></li>
+          </ol>
+          <p>Reforming the batch does not recompute the entire context. The execution engine stores KV by request and reuses it across iterations. What the scheduler and engine exchange includes the current iteration&#39;s tokens, request identifiers, and execution positions. Even if a request is batched with different requests in the next iteration, it continues generating from its own KV state.<sup class="citation"><a id="cite-7-4" href="#ref-7" aria-label="Go to reference 7">[7]</a></sup> A simplified process is shown below:</p>
+          <figure class="article-figure">
+          <img src="../assets/articles/llm-inference-scheduling/orca_iteration.svg" width="2136" height="896" alt="Orca reselects the batch every iteration: D finishes in Round 2 and B joins in Round 3; A finishes in Round 4 and C joins in Round 5; one iteration can include Decode and a complete Prefill" loading="eager" decoding="async" />
+          </figure>
+
+
+
+          <p>At the end of Round 2, D has finished, and the scheduler removes it. The batch in Round 3 can then become {A, B}: A advances by one Decode step, while B processes its complete input and produces its first output. B no longer has to wait for A to finish its entire answer.</p>
+          <p>Orca&#39;s specific policy still selects requests in order of arrival, with at most <code>max_bs</code> requests in each batch. When a request is first admitted, it also reserves enough KV slots for the request&#39;s maximum total number of tokens, so there will be space for additional KV during later generation. The reservation can be released only after the request finishes. Therefore, for B to enter in Round 3, it needs both the batch capacity left after D exits and enough KV space. Different requests process different numbers of tokens and have different Attention-state lengths. After the scheduler has selected the requests, the engine must still organize this group of computations efficiently.<sup class="citation"><a id="cite-7-5" href="#ref-7" aria-label="Go to reference 7">[7]</a></sup></p>
+          <h3 id="section-2-2" data-outline>2.2 Mixed-Batch Execution and KV Cache Management</h3>
+          <p>Orca uses selective batching to support such mixed batches: the narrowly defined Attention operation is executed separately for each request, while other operations that are suitable for combining are batched. This design allows mixed requests to advance in the same iteration.<sup class="citation"><a id="cite-7-6" href="#ref-7" aria-label="Go to reference 7">[7]</a></sup></p>
+          <p>Another requirement is to manage the continually growing states of these requests efficiently. <a href="https://arxiv.org/abs/2309.06180">PagedAttention</a> manages the KV cache in blocks, reducing waste caused by large contiguous allocations, over-reservation, and fragmentation, while supporting shared states. vLLM builds a serving system on top of this mechanism.</p>
+          <p>The two operate at different levels. The scheduler decides “who runs in this iteration,” while memory management decides “which valid states can fit in GPU memory.” Improving memory utilization can make more requests eligible for admission, but it does not automatically determine their order of execution. Even the most flexible admission policy, however, cannot bypass the capacity of GPU memory.</p>
+          <p>At this point, A, B, and C have met at iteration boundaries. But even if they enter the same batch, can their respective latency requirements be met?</p>
+          </section>
+
+          <section aria-labelledby="section-3">
+          <h2 id="section-3" data-outline>3. Chunked Prefill: Limiting the Amount of Input Processed per Iteration</h2>
+          <h3 id="section-3-1" data-outline>3.1 Interference from a Long Prefill on Decode</h3>
+          <p>When A is decoding, if the scheduler prioritizes processing B&#39;s entire long input, A has to wait for this Prefill. Combining A&#39;s Decode and B&#39;s Prefill in the same batch makes the execution time of the current iteration grow with the computation introduced by B (see Section 1.1), and A receives its next token later.<sup class="citation"><a id="cite-1-6" href="#ref-1" aria-label="Go to reference 1">[1]</a></sup></p>
+          <p>Conversely, if existing Decode work is always prioritized and new Prefill work does not run until it has finished, the first tokens of B and C are delayed. Meanwhile, as existing requests continue to exit, the Decode batch may become progressively smaller, reducing the efficiency gained from batching.<sup class="citation"><a id="cite-1-7" href="#ref-1" aria-label="Go to reference 1">[1]</a></sup></p>
+          <p>Agrawal et al. use the figure below to compare these tradeoffs. vLLM and Orca both prioritize allowing a new Prefill to join execution: vLLM temporarily does not run existing Decode work, while Orca mixes Decode with a complete Prefill, but the longer iteration still delays output. <a href="https://github.com/NVIDIA/FasterTransformer">FasterTransformer</a> prioritizes completing existing Decode work, while new requests wait a long time for Prefill. Sarathi-Serve splits up the long Prefill and interleaves it with Decode, further limiting the amount of work executed in each iteration.<sup class="citation"><a id="cite-1-8" href="#ref-1" aria-label="Go to reference 1">[1]</a></sup></p>
+          <figure class="article-figure">
+          <img src="../assets/articles/llm-inference-scheduling/sarathi-serve-fig7.webp" width="2200" height="1324" alt="Sarathi-Serve compares timelines for Prefill-priority, Decode-priority, and chunked mixed execution" loading="eager" decoding="async" />
+          <figcaption><em>Where different scheduling strategies place the waiting. Original figure from Agrawal et al., “Sarathi-Serve,” OSDI 2024, Figure 7</em><sup class="citation"><a id="cite-1-9" href="#ref-1" aria-label="Go to reference 1">[1]</a></sup></figcaption>
+          </figure>
+
+
+
+          <aside class="article-note">
+          <p>Note: vLLM 0.5.2 already provides optional chunked prefill, which prioritizes Decode when enabled.<sup class="citation"><a id="cite-8" href="#ref-8" aria-label="Go to reference 8">[8]</a></sup> V1 enables this mechanism by default when it is supported.<sup class="citation"><a id="cite-9" href="#ref-9" aria-label="Go to reference 9">[9]</a></sup></p>
+          </aside>
+          <h3 id="section-3-2" data-outline>3.2 Mixed Execution of Chunked Prefill and Decode</h3>
+          <p>Chunked prefill spreads the computation for a long input across multiple iterations. With causal Attention, later input positions still use the states of earlier positions: after a chunk is completed, its KV is retained, and the next chunk continues computation on top of these states. It is the execution process that is split; the input still belongs to the same context. Only after the final chunk has been completed is there a complete computation result that can produce the prompt&#39;s first output.<sup class="citation"><a id="cite-1-10" href="#ref-1" aria-label="Go to reference 1">[1]</a></sup><sup class="citation"><a id="cite-2-2" href="#ref-2" aria-label="Go to reference 2">[2]</a></sup></p>
+          <p>Why can this partitioning work together with Decode? A small Decode batch is often constrained by memory access and leaves compute units with spare capacity. Inserting an appropriate number of Prefill tokens can increase the amount of useful computation in the same iteration. Once Prefill reaches a certain size, it can already use compute resources effectively; it may not need to process the entire long input at once to remain efficient. Chunking therefore provides room for adjustment: it limits the duration of a single iteration while maintaining computational efficiency.<sup class="citation"><a id="cite-1-11" href="#ref-1" aria-label="Go to reference 1">[1]</a></sup></p>
+          <p>SARATHI&#39;s single-layer experiment provides a concrete example. The maximum throughput of the Prefill phase is affected by input length. As long as an input chunk contains enough tokens, it may maintain high execution efficiency; making the input still longer does not necessarily improve the processing speed per token. Decode throughput rises as the batch grows, while under the same batch size, a longer historical context lowers throughput.<sup class="citation"><a id="cite-2-3" href="#ref-2" aria-label="Go to reference 2">[2]</a></sup></p>
+          <p><strong>Arithmetic intensity</strong> is the amount of floating-point computation performed for each byte of data read or written. The arithmetic intensity of small-batch Decode is substantially lower than that of Prefill, which helps explain the two phases&#39; different needs for compute and bandwidth.<sup class="citation"><a id="cite-2-4" href="#ref-2" aria-label="Go to reference 2">[2]</a></sup><sup class="citation"><a id="cite-3-2" href="#ref-3" aria-label="Go to reference 3">[3]</a></sup></p>
+          <figure class="article-figure">
+          <img src="../assets/articles/llm-inference-scheduling/sarathi-2023-fig4.webp" width="2200" height="1992" alt="SARATHI shows how sequence length and batch size affect Prefill and Decode throughput and arithmetic intensity" loading="eager" decoding="async" />
+          <figcaption><em>The effects of sequence length and batch size on execution efficiency. Original figure from Agrawal et al., “SARATHI,” 2023, Figure 4</em><sup class="citation"><a id="cite-2-5" href="#ref-2" aria-label="Go to reference 2">[2]</a></sup></figcaption>
+          </figure>
+
+
+
+          <p>SARATHI studied combinations in which Decode piggybacks on chunked Prefill and discussed how differences in per-iteration workloads affect pipeline efficiency. Sarathi-Serve further targets online serving, organizing batches with a token budget to control the tradeoff between throughput and generation latency.<sup class="citation"><a id="cite-1-12" href="#ref-1" aria-label="Go to reference 1">[1]</a></sup><sup class="citation"><a id="cite-2-6" href="#ref-2" aria-label="Go to reference 2">[2]</a></sup></p>
+          <p>Two key concepts need to be distinguished here: a <strong>generation stall</strong> concerns why a request that has already begun generating fails to receive its next token for a long time. For example, A is decoding, but for some scheduling reason A&#39;s generation pauses, substantially lengthening A&#39;s output interval and making the user feel that the answer has stopped.<sup class="citation"><a id="cite-1-13" href="#ref-1" aria-label="Go to reference 1">[1]</a></sup> A <strong>pipeline bubble</strong> concerns why an execution stage in a pipeline temporarily has no work to do. For example, with two GPUs, pipeline parallelism places the first half of the model&#39;s layers on GPU 1 and the second half on GPU 2. The same batch must first pass through GPU 1, which then passes its intermediate results to GPU 2. If GPU 1 is processing a time-consuming batch while GPU 2 has finished the previous batch and has no other ready work, GPU 2 can only wait idly for the next set of intermediate results.<sup class="citation"><a id="cite-2-7" href="#ref-2" aria-label="Go to reference 2">[2]</a></sup></p>
+          <p>Chunking therefore has two different effects: limiting the amount of Prefill work per iteration while continuously scheduling Decode can reduce generation stalls for requests. In pipeline parallelism, making the execution times of different batches more similar can reduce waiting between stages.<sup class="citation"><a id="cite-1-14" href="#ref-1" aria-label="Go to reference 1">[1]</a></sup><sup class="citation"><a id="cite-2-8" href="#ref-2" aria-label="Go to reference 2">[2]</a></sup></p>
+          <h3 id="section-3-3" data-outline>3.3 Sarathi-Serve&#39;s Token-Budget Scheduling</h3>
+          <p>In each iteration, Sarathi-Serve first schedules running Decode requests, then Prefill requests that have not yet finished, and only then admits new requests within the remaining budget. The budget here counts the <strong>number of tokens newly processed in the current iteration</strong>. With ordinary single-token Decode, each running request first occupies one budget token. The remaining capacity can be allocated to Prefill.<sup class="citation"><a id="cite-1-15" href="#ref-1" aria-label="Go to reference 1">[1]</a></sup></p>
+          <p>Continue with A, B, and C. Suppose that the budget for each iteration is 8, A is already decoding, B has 12 input tokens, and C has 2; both arrive before the scheduling decision for Round 1, with B ahead of C. Also assume that there is enough GPU memory and that none of the three requests finishes within the following three rounds.</p>
+          <div class="article-table-wrap"><table>
+          <thead>
+          <tr>
+          <th>Round</th>
+          <th>Schedule Decode first</th>
+          <th>Use the remaining budget for Prefill</th>
+          <th>State at the end of the round</th>
+          </tr>
+          </thead>
+          <tbody><tr>
+          <td>Round 1</td>
+          <td>A: 1 token</td>
+          <td>B: 7 tokens</td>
+          <td>B has 5 input tokens remaining; C waits</td>
+          </tr>
+          <tr>
+          <td>Round 2</td>
+          <td>A: 1 token</td>
+          <td>B: 5 tokens; C: 2 tokens</td>
+          <td>B and C complete Prefill and each produces its first output</td>
+          </tr>
+          <tr>
+          <td>Round 3</td>
+          <td>A, B, C: 1 token each</td>
+          <td>No pending Prefill</td>
+          <td>All three continue generating, using 3 budget tokens</td>
+          </tr>
+          </tbody></table>
+          </div>
+          <p>Round 1 is no longer occupied by B&#39;s entire input, and A has an opportunity to advance in every round. B completes Prefill over two rounds, while C joins using the remaining budget in Round 2. As this shows, chunking does not eliminate waiting: B needs multiple rounds to complete its input, and C may still queue. It exposes more boundaries at which a long task can be rescheduled, thereby controlling its uninterrupted occupation of resources needed by other requests.</p>
+          </section>
+
+          <section aria-labelledby="section-4">
+          <h2 id="section-4" data-outline>4. Choosing the Chunk Size: The Tradeoff Between Efficiency and Latency</h2>
+          <h3 id="section-4-1" data-outline>4.1 Comparing the Time of Full and Chunked Prefill</h3>
+          <p>Sarathi-Serve&#39;s <em>stall-free</em> describes a scheduling property: running Decode requests no longer lose the opportunity to advance for a long time because a complete Prefill is executed separately. It does not guarantee that a mixed batch is as fast as a pure Decode batch.<sup class="citation"><a id="cite-1-16" href="#ref-1" aria-label="Go to reference 1">[1]</a></sup></p>
+          <figure class="article-figure">
+          <img src="../assets/articles/llm-inference-scheduling/sarathi-serve-fig9.webp" width="2200" height="1052" alt="Sarathi-Serve compares the batch times of pure Decode, Decode plus chunked Prefill, and Decode plus complete Prefill" loading="eager" decoding="async" />
+          <figcaption><em>The incremental cost of adding Prefill to a Decode batch. Original figure from Agrawal et al., “Sarathi-Serve,” OSDI 2024, Figure 9</em><sup class="citation"><a id="cite-1-17" href="#ref-1" aria-label="Go to reference 1">[1]</a></sup></figcaption>
+          </figure>
+
+
+
+          <p>The figure compares the <strong>batch execution time</strong> under three strategies—pure Decode, adding chunked Prefill, and adding complete Prefill—across different context lengths and batch sizes. Complete Prefill increases the batch time to about 20.3 times that of pure Decode, while the corresponding value after chunking is about 2.0 times. This shows that “limiting the amount of inserted Prefill work can substantially reduce interference,” while also showing that the additional cost has not disappeared.<sup class="citation"><a id="cite-1-18" href="#ref-1" aria-label="Go to reference 1">[1]</a></sup></p>
+          <aside class="article-note">
+          <p>Note: To determine how much an online service has improved, it is still necessary to measure request queueing, TTFT, generation intervals, and their tails. The serving capacity of the entire system cannot be inferred directly from the time of a single batch.</p>
+          </aside>
+          <h3 id="section-4-2" data-outline>4.2 How to Choose the Chunk Size and Token Budget</h3>
+          <p>Making chunks smaller can usually limit the Prefill work added in a single iteration, making interference with Decode easier to control. But the same input must pass through more iterations, and the time to complete the first token becomes more susceptible to queueing across iterations. If computation is too fragmented, kernel launches, scheduling, and lower compute utilization may become significant, and later chunks still need to access earlier KV.<sup class="citation"><a id="cite-1-19" href="#ref-1" aria-label="Go to reference 1">[1]</a></sup><sup class="citation"><a id="cite-2-9" href="#ref-2" aria-label="Go to reference 2">[2]</a></sup></p>
+          <p>Increasing the chunk size may improve the rate and execution efficiency of Prefill, but it also makes mixed batches heavier, so requests in Decode are more likely to experience longer intervals. The appropriate budget depends on the objective currently under constraint: strict requirements on generation intervals limit how much work can be inserted into each iteration, while a tight first-token target requires reserving enough serving capacity for waiting Prefill requests.<sup class="citation"><a id="cite-1-20" href="#ref-1" aria-label="Go to reference 1">[1]</a></sup></p>
+          <p>The budget should therefore be chosen by comparing TTFT and generation-interval distributions under a fixed model, hardware configuration, and request trace, while also observing throughput. Input and output lengths and arrival intensity should also be varied to examine performance under long inputs, bursty traffic, and sustained Decode occupancy. A configuration that is suitable under low load may not maintain the same latency near overload.<sup class="citation"><a id="cite-5-2" href="#ref-5" aria-label="Go to reference 5">[5]</a></sup></p>
+          </section>
+
+          <section aria-labelledby="section-5">
+          <h2 id="section-5" data-outline>5. Summary of the Mechanisms: Request Scheduling, KV Management, and Chunked Execution</h2>
+          <p>Taken together, continuous batching, block-based KV management, and chunked Prefill each change a different constraint.</p>
+          <div class="article-table-wrap"><table>
+          <thead>
+          <tr>
+          <th>Mechanism</th>
+          <th>Additional control it provides</th>
+          <th>Remaining limitations</th>
+          </tr>
+          </thead>
+          <tbody><tr>
+          <td>Iteration-level / continuous batching</td>
+          <td>Admit and remove requests at iteration boundaries</td>
+          <td>Long iterations still affect other requests in the batch</td>
+          </tr>
+          <tr>
+          <td>Block-based KV management such as PagedAttention</td>
+          <td>Use GPU memory capacity and organize shared states more efficiently</td>
+          <td>States still have access costs, and scheduling order must still be decided separately</td>
+          </tr>
+          <tr>
+          <td>Chunked Prefill and mixed batches</td>
+          <td>Control the input work inserted in each iteration and allow Decode to keep advancing</td>
+          <td>Tradeoffs remain among chunk size, first-token waiting, and computational efficiency</td>
+          </tr>
+          </tbody></table>
+          </div>
+          <p>This also answers the opening question about A, B, and C. First allowing B and C to join at iteration boundaries, and then setting the amount of Prefill work they may perform in each iteration, addresses both “whether they have an opportunity to run” and “how long one execution affects others.” Capacity management determines whether this arrangement can fit in GPU memory.</p>
+          <p>These mechanisms still place the two phases on the same set of execution resources. Even when per-iteration scheduling is sufficiently fine-grained, Prefill and Decode must still share hardware and parallelism configurations. When coupling in these configurations becomes the main constraint, the next step is to deploy the two phases independently. The question then expands from “who runs in this iteration” to “where a request is sent, how many resources are allocated to each side, and how intermediate states are handed off.”<sup class="citation"><a id="cite-10" href="#ref-10" aria-label="Go to reference 10">[10]</a></sup></p>
+          <p>Recommended related reading: Part 2 (not yet published).</p>
+          </section>
+          <section class="article-references" aria-labelledby="references">
+          <h2 id="references" data-outline>References</h2>
+          <ol>
+          <li id="ref-1">Amey Agrawal et al. <a href="https://www.usenix.org/conference/osdi24/presentation/agrawal">Taming Throughput-Latency Tradeoff in LLM Inference with Sarathi-Serve</a>. OSDI 2024, pp. <a class="reference-back" href="#cite-1" aria-label="Back to citation 1">↩</a></li>
+          <li id="ref-2">Amey Agrawal et al. <a href="https://arxiv.org/abs/2308.16369v1">SARATHI: Efficient LLM Inference by Piggybacking Decodes with Chunked Prefills</a>. arXiv:2308.16369v1, 2023. <a class="reference-back" href="#cite-2" aria-label="Back to citation 2">↩</a></li>
+          <li id="ref-3">NVIDIA. <a href="https://docs.nvidia.com/deeplearning/performance/dl-performance-gpu-background/index.html">GPU Performance Background User&#39;s Guide</a>. <a class="reference-back" href="#cite-3" aria-label="Back to citation 3">↩</a></li>
+          <li id="ref-4">NVIDIA. <a href="https://docs.nvidia.com/nim/benchmarking/llm/1.0.0/metrics.html">NIM LLMs Benchmarking: Metrics</a>. <a class="reference-back" href="#cite-4" aria-label="Back to citation 4">↩</a></li>
+          <li id="ref-5">Vinh Nguyen et al. <a href="https://developer.nvidia.com/blog/llm-benchmarking-fundamental-concepts/">LLM Inference Benchmarking: Fundamental Concepts</a>. NVIDIA Technical Blog, 2025-04-02. <a class="reference-back" href="#cite-5" aria-label="Back to citation 5">↩</a></li>
+          <li id="ref-6">vLLM contributors. <a href="https://docs.vllm.ai/en/stable/features/automatic_prefix_caching/">Automatic Prefix Caching</a>. stable documentation. <a class="reference-back" href="#cite-6" aria-label="Back to citation 6">↩</a></li>
+          <li id="ref-7">Gyeong-In Yu et al. <a href="https://www.usenix.org/conference/osdi22/presentation/yu">Orca: A Distributed Serving System for Transformer-Based Generative Models</a>. OSDI 2022, pp. 521–538. <a class="reference-back" href="#cite-7" aria-label="Back to citation 7">↩</a></li>
+          <li id="ref-8">vLLM contributors. <a href="https://docs.vllm.ai/en/v0.5.2/models/performance.html#chunked-prefill">Performance and Tuning: Chunked Prefill</a>. v0.5.2 documentation. <a class="reference-back" href="#cite-8" aria-label="Back to citation 8">↩</a></li>
+          <li id="ref-9">vLLM contributors. <a href="https://docs.vllm.ai/en/stable/configuration/optimization/#chunked-prefill">Optimization and Tuning: Chunked Prefill</a>. V1 / stable documentation. <a class="reference-back" href="#cite-9" aria-label="Back to citation 9">↩</a></li>
+          <li id="ref-10">Yinmin Zhong et al. <a href="https://www.usenix.org/conference/osdi24/presentation/zhong-yinmin">DistServe: Disaggregating Prefill and Decoding for Goodput-optimized Large Language Model Serving</a>. OSDI 2024, pp. <a class="reference-back" href="#cite-10" aria-label="Back to citation 10">↩</a></li>
+          </ol>
+          </section>
+
+
+          <footer class="article-end">
+            <a href="../index.html" data-en="← Back to all writing" data-zh="← 返回全部文章">← Back to all writing</a>
+          </footer>
+        </div>
+      </article>
+
+      <nav class="article-pagination shell" aria-label="Adjacent articles">
+        <span><small data-en="Previous" data-zh="上一篇">Previous</small><strong data-en="This is the first article" data-zh="这是第一篇文章">This is the first article</strong></span>
+        <a href="aggregate-your-personal-knowledge.html"><small data-en="Next" data-zh="下一篇">Next</small><strong>Aggregate Your Personal Knowledge and Build Your Wiki →</strong></a>
+      </nav>
+    </main>
+
+    <div class="outline-control">
+      <button id="outline-toggle" class="outline-toggle" type="button" aria-expanded="false" aria-controls="outline-panel">
+        <span data-en="Outline" data-zh="大纲">Outline</span>
+        <span class="outline-position"><span id="outline-current">1</span>/<span id="outline-total">0</span></span>
+      </button>
+      <nav id="outline-panel" class="outline-panel" aria-label="Article outline" hidden>
+        <div class="outline-panel-header">
+          <div><span data-en="On this page" data-zh="本页大纲">On this page</span><small data-en="Jump to a section" data-zh="快速跳转章节">Jump to a section</small></div>
+          <button id="outline-close" type="button" aria-label="Close outline">×</button>
+        </div>
+        <ol id="outline-list"></ol>
+      </nav>
+    </div>
+
+    <footer class="article-site-footer">
+      <div class="shell"><span>© <span id="year"></span> Jefferson Zhou</span><a href="../about.html" data-en="About the author →" data-zh="关于作者 →">About the author →</a></div>
+    </footer>
+  </body>
+</html>
