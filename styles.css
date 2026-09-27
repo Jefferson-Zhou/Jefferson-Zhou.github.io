@@ -216,6 +216,10 @@ a {
   line-height: 1.75;
 }
 
+.home-intro h1 > span {
+  display: block;
+}
+
 .home-note {
   margin: 0;
   padding-left: 28px;
