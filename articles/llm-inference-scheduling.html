@@ -321,7 +321,7 @@ T_prefill,compute ≈ T_prefill,linear + T_prefill,attention
           </div>
           <p>这也回答了开头的 A、B、C 问题。先让 B、C 能在迭代边界加入，再给它们的 Prefill 设置每轮工作量，才能同时处理“有没有机会运行”和“运行一次影响别人多久”。容量管理则决定这一安排能否在显存中成立。</p>
           <p>这些机制仍然把两阶段放在同一组执行资源上。即使每轮调度已经足够细，Prefill 与 Decode 仍需共享硬件和并行配置。当这种配置上的耦合成为主要限制时，下一步就是独立部署两阶段。问题也随之从“这一轮让谁运行”扩展为“请求送到哪里、两边各分多少资源，以及中间状态如何交接”。<sup class="citation"><a id="cite-10" href="#ref-10" aria-label="跳转到参考文献 10">[10]</a></sup></p>
-          <p>推荐相关阅读：第二篇（尚未发布）。</p>
+          <p>推荐相关阅读：<a href="prefill-decode-disaggregation.html">Prefill–Decode 分离：资源配置、KV 交接与缓存复用</a>。</p>
           </section>
           <section class="article-references" aria-labelledby="references">
           <h2 id="references" data-outline>参考文献</h2>
@@ -348,7 +348,7 @@ T_prefill,compute ≈ T_prefill,linear + T_prefill,attention
 
       <nav class="article-pagination shell" aria-label="相邻文章">
         <span><small data-en="Previous" data-zh="上一篇">上一篇</small><strong data-en="This is the first article" data-zh="这是第一篇文章">这是第一篇文章</strong></span>
-        <a href="../article.html"><small data-en="Next" data-zh="下一篇">下一篇</small><strong>聚合你的个人知识，构建你的wiki →</strong></a>
+        <a href="prefill-decode-disaggregation.html"><small data-en="Next" data-zh="下一篇">下一篇</small><strong>Prefill–Decode 分离：资源配置、KV 交接与缓存复用 →</strong></a>
       </nav>
     </main>
 

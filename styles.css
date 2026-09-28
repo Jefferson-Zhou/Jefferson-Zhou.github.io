@@ -1017,6 +1017,33 @@ html[lang^="zh"] .article-content p {
   line-height: 1.5;
 }
 
+.interactive-figure {
+  margin: 40px 0;
+}
+
+.interactive-figure iframe {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.interactive-figure figcaption {
+  margin-top: 13px;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+@media (max-width: 760px) {
+  .interactive-figure iframe {
+    height: 1300px;
+  }
+}
+
 .article-table-wrap {
   width: 100%;
   margin: 32px 0;

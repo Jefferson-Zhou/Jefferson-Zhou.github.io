@@ -321,7 +321,7 @@ T_prefill,compute ≈ T_prefill,linear + T_prefill,attention
           </div>
           <p>This also answers the opening question about A, B, and C. First allowing B and C to join at iteration boundaries, and then setting the amount of Prefill work they may perform in each iteration, addresses both “whether they have an opportunity to run” and “how long one execution affects others.” Capacity management determines whether this arrangement can fit in GPU memory.</p>
           <p>These mechanisms still place the two phases on the same set of execution resources. Even when per-iteration scheduling is sufficiently fine-grained, Prefill and Decode must still share hardware and parallelism configurations. When coupling in these configurations becomes the main constraint, the next step is to deploy the two phases independently. The question then expands from “who runs in this iteration” to “where a request is sent, how many resources are allocated to each side, and how intermediate states are handed off.”<sup class="citation"><a id="cite-10" href="#ref-10" aria-label="Go to reference 10">[10]</a></sup></p>
-          <p>Recommended related reading: Part 2 (not yet published).</p>
+          <p>Recommended related reading: <a href="prefill-decode-disaggregation.html">Part 2 — Prefill–Decode Disaggregation (Chinese)</a>.</p>
           </section>
           <section class="article-references" aria-labelledby="references">
           <h2 id="references" data-outline>References</h2>
@@ -348,7 +348,7 @@ T_prefill,compute ≈ T_prefill,linear + T_prefill,attention
 
       <nav class="article-pagination shell" aria-label="Adjacent articles">
         <span><small data-en="Previous" data-zh="上一篇">Previous</small><strong data-en="This is the first article" data-zh="这是第一篇文章">This is the first article</strong></span>
-        <a href="aggregate-your-personal-knowledge.html"><small data-en="Next" data-zh="下一篇">Next</small><strong>Aggregate Your Personal Knowledge and Build Your Wiki →</strong></a>
+        <a href="prefill-decode-disaggregation.html"><small data-en="Next" data-zh="下一篇">Next</small><strong>Prefill–Decode Disaggregation (Chinese) →</strong></a>
       </nav>
     </main>
 

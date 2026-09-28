@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DistServe GPU placement</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&amp;family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&amp;display=swap" rel="stylesheet">
+<style>
+:root { --background:#fff; --foreground:#1f2933; --muted-foreground:#64707d; --border:#dfe3e8; --viz-series-1:#546b87; --viz-series-2:#a56552; --viz-series-3:#60947d; --font-size-base:15px; --serif:"Source Serif 4",Georgia,serif; --mono:"DM Mono",Consolas,monospace; }
+* { box-sizing:border-box; }
+body { margin:12px; background:var(--background); color:var(--foreground); }
+</style>
+</head>
+<body>
+<div id="distserve-gpu-placement">
+  <style>
+    #distserve-gpu-placement { font-family:var(--serif); }
+    #distserve-gpu-placement .viz-controls { display:flex; flex-wrap:wrap; align-items:center; gap:9px; margin:0 0 10px; }
+    #distserve-gpu-placement .viz-controls .btn { padding:8px 13px; border:1px solid var(--border); border-radius:7px; color:var(--foreground); background:var(--background); font:500 calc(var(--font-size-base) * .76)/1.2 var(--mono); white-space:nowrap; cursor:pointer; }
+    #distserve-gpu-placement .viz-controls .btn:hover { background:#f6f7f9; }
+    #distserve-gpu-placement .viz-controls .btn[aria-pressed="true"] { border-color:var(--viz-series-1); background:color-mix(in srgb,var(--viz-series-1) 15%,var(--background)); box-shadow:2px 2px 0 color-mix(in srgb,var(--viz-series-1) 35%,transparent); }
+    #distserve-gpu-placement .viz-controls .btn:focus-visible { outline:2px solid var(--viz-series-1); outline-offset:3px; }
+    #distserve-gpu-placement .gpu-canvas { width:100%; display:block; overflow:visible; }
+    #distserve-gpu-placement .gpu-canvas text { fill:var(--foreground); font-family:var(--serif); font-size:var(--font-size-base); font-weight:500; }
+    #distserve-gpu-placement .gpu-canvas .minor { fill:var(--muted-foreground); font-size:calc(var(--font-size-base) * .86); }
+    #distserve-gpu-placement .gpu-canvas .heading { font-weight:500; }
+    #distserve-gpu-placement .node-boundary { fill:color-mix(in srgb,var(--foreground) 1%,var(--background)); stroke:var(--border); stroke-width:1.8; }
+    #distserve-gpu-placement .stage-boundary { fill:color-mix(in srgb,var(--viz-series-1) 8%,var(--background)); stroke:var(--viz-series-1); stroke-width:1.6; filter:url(#dg-sketch); }
+    #distserve-gpu-placement .stage-d .stage-boundary { fill:color-mix(in srgb,var(--viz-series-2) 8%,var(--background)); stroke:var(--viz-series-2); }
+    #distserve-gpu-placement .gpu-box { fill:var(--background); stroke:var(--border); stroke-width:1.4; filter:url(#dg-sketch); }
+    #distserve-gpu-placement .gpu-band { fill:var(--viz-series-1); opacity:.8; }
+    #distserve-gpu-placement .stage-d .gpu-band { fill:var(--viz-series-2); }
+    #distserve-gpu-placement .flow { fill:none; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; stroke:var(--viz-series-1); }
+    #distserve-gpu-placement .flow-d { stroke:var(--viz-series-2); }
+    #distserve-gpu-placement .flow-kv { stroke:var(--viz-series-3); stroke-dasharray:5 4; }
+    #distserve-gpu-placement .return-flow { stroke:var(--muted-foreground); stroke-dasharray:3 4; stroke-width:1.5; }
+    #distserve-gpu-placement .quiet-flow { opacity:.13; }
+    #distserve-gpu-placement .quiet-stage { opacity:.32; }
+    #distserve-gpu-placement .quiet-stage .gpu-band { opacity:.25; }
+    #distserve-gpu-placement .quiet-stage .stage-boundary { fill:var(--background); }
+    #distserve-gpu-placement .glyph-mask { fill:var(--background); }
+    @media (max-width:390px) { #distserve-gpu-placement .viz-controls { gap:7px; } #distserve-gpu-placement .viz-controls .btn { padding:7px 9px; font-size:calc(var(--font-size-base) * .82); } }
+  </style>
+  <div class="viz-controls" role="group" aria-label="切换图示阶段">
+    <button type="button" class="btn" data-mode="all" aria-pressed="true">总览</button>
+    <button type="button" class="btn" data-mode="prefill" aria-pressed="false">1 Prefill</button>
+    <button type="button" class="btn" data-mode="kv" aria-pressed="false">2 KV 传输</button>
+    <button type="button" class="btn" data-mode="decode" aria-pressed="false">3 Decode</button>
+  </div>
+  <svg class="gpu-canvas" role="img" aria-label="Prefill 实例 P1 与 Decode 实例 D1 的示意布局：各有两段流水线并采用两路张量并行，对应阶段在节点内传输 KV。"></svg>
+  <script>
+  (() => {
+    const root = document.getElementById('distserve-gpu-placement');
+    const svg = root.querySelector('.gpu-canvas');
+    const buttons = [...root.querySelectorAll('[data-mode]')];
+    let mode = 'all';
+    const active = t => mode === 'all' || mode === t;
+    const fmt = n => Number(n.toFixed(2));
+    const text = (x,y,value,klass='',anchor='middle') => `<text x="${fmt(x)}" y="${fmt(y)}" text-anchor="${anchor}" class="${klass}">${value}</text>`;
+    const marker = (name,color) => `<marker id="dg-${name}" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto-start-reverse"><path d="M0 0 L7 3.5 L0 7 Z" fill="var(${color})"/></marker>`;
+    const flow = (d,t,both=false,ret=false) => {
+      const color = ret ? 'r' : (t === 'decode' ? 'd' : (t === 'kv' ? 'kv' : 'p'));
+      const cls = ['flow',t === 'decode' ? 'flow-d' : '',t === 'kv' ? 'flow-kv' : '',ret?'return-flow':'',active(t)?'':'quiet-flow'].join(' ');
+      return `<path d="${d}" class="${cls}" marker-end="url(#dg-${color})" ${both ? `marker-start="url(#dg-${color})"`:''}/>`;
+    };
+    function draw() {
+      const w = Math.max(288, Math.floor(root.getBoundingClientRect().width));
+      const wide = w >= 640;
+      const gap = wide ? 86 : 0;
+      const margin = wide ? 12 : 24;
+      const nw = wide ? (w-2*margin-gap)/2 : w-2*margin;
+      const nx = [margin,wide ? margin+nw+gap : margin];
+      const ny = [12,wide ? 12 : 588];
+      const h = wide ? 585 : 1170;
+      const stageHeight = 160;
+      const nodes = [];
+      let layers = '';
+      let paths = '';
+      let labels = '';
+      let cards = '';
+      for (let node=0;node<2;node++) {
+        const x=nx[node], y=ny[node], groupX=x+12, groupW=nw-24;
+        const py=y+70,dy=y+327;
+        nodes.push({x,y,gx:groupX,gw:groupW,py,dy});
+        layers += `<rect x="${fmt(x)}" y="${y}" width="${fmt(nw)}" height="530" rx="11" class="node-boundary"/>`;
+        layers += text(x+nw/2,y+26,`NODE ${node?'B':'A'} · 4 GPUs`,'heading');
+        layers += text(x+nw/2,y+47,'Fast intra-node link','minor');
+        for (let phase=0;phase<2;phase++) {
+          const sy=phase?dy:py, t=phase?'decode':'prefill';
+          const cls=`stage-${phase?'d':'p'} ${active(t)?'':'quiet-stage'}`;
+          const start=node*4+phase*2;
+          const pad=11, innerGap=19;
+          const gpuW=(groupW-2*pad-innerGap)/2;
+          const gpuY=sy+49;
+          cards += `<g class="${cls}" data-stage="${node}-${phase}"><rect x="${fmt(groupX)}" y="${sy}" width="${fmt(groupW)}" height="${stageHeight}" rx="9" class="stage-boundary"/>`;
+          cards += text(groupX+groupW/2,sy+22,`${phase?'D1 · DECODE':'P1 · PREFILL'} / PP ${node+1}`,'heading');
+          cards += text(groupX+groupW/2,sy+39,`Layers ${node?'33–64':'1–32'} · TP 2`,'minor');
+          const centers=[];
+          for (let shard=0;shard<2;shard++) {
+            const gx=groupX+pad+shard*(gpuW+innerGap);
+            centers.push(gx+gpuW/2);
+            cards += `<rect x="${fmt(gx)}" y="${gpuY}" width="${fmt(gpuW)}" height="76" rx="7" class="gpu-box"/><rect x="${fmt(gx+2)}" y="${gpuY+2}" width="${fmt(gpuW-4)}" height="4" rx="2" class="gpu-band"/>`;
+            cards += text(gx+gpuW/2,gpuY+25,`GPU ${start+shard}`,'heading');
+            cards += text(gx+gpuW/2,gpuY+46,`TP shard ${shard}`,'minor');
+            cards += text(gx+gpuW/2,gpuY+64,'Weights + KV','minor');
+          }
+          const ax=groupX+pad+gpuW, bx=ax+innerGap;
+          cards += flow(`M${fmt(ax)} ${gpuY+37} H${fmt(bx)}`,t,true);
+          cards += text(groupX+groupW/2,sy+147,'TP exchange','minor');
+          cards += '</g>';
+          if(phase===0) {
+            nodes[node].centers=centers;
+            nodes[node].gpuW=gpuW;
+          }
+        }
+        for(let shard=0;shard<2;shard++) {
+          const cx=nodes[node].centers[shard];
+          paths += flow(`M${fmt(cx)} ${py+stageHeight} V${dy}`, 'kv');
+        }
+        const center=x+nw/2;
+        labels += `<rect x="${fmt(center-58)}" y="${py+186}" width="116" height="50" rx="5" class="glyph-mask"/>`;
+        labels += text(center,py+202,'KV transfer','heading');
+        labels += text(center,py+223,`${node?4:0} → ${node?6:2}    ${node?5:1} → ${node?7:3}`,'minor');
+      }
+      const a=nodes[0],b=nodes[1];
+      if(wide) {
+        for(let phase=0;phase<2;phase++) {
+          const y=(phase?a.dy:a.py)+86,t=phase?'decode':'prefill';
+          paths += flow(`M${fmt(a.gx+a.gw)} ${y} H${fmt(b.gx)}`,t);
+          labels += text(w/2,y-20,'PP activations','minor');
+          labels += text(w/2,y+27,'between nodes','minor');
+        }
+        const left=a.gx+39,right=b.gx+b.gw-39;
+        paths += flow(`M${fmt(right)} ${b.dy+stageHeight} V556 Q${fmt(right)} 567 ${fmt(right-10)} 567 H${fmt(left+10)} Q${fmt(left)} 567 ${fmt(left)} 556 V${a.dy+stageHeight}`,'decode',false,true);
+        labels += `<rect x="${fmt(w/2-87)}" y="550" width="174" height="28" rx="4" class="glyph-mask"/>`;
+        labels += text(w/2,568,'Next token → D1 / PP 1','minor');
+      } else {
+        const l=8,r=w-8;
+        paths += flow(`M${fmt(a.gx)} ${a.py+86} H${l+8} Q${l} ${a.py+86} ${l} ${a.py+94} V${b.py+78} Q${l} ${b.py+86} ${l+8} ${b.py+86} H${fmt(b.gx)}`,'prefill');
+        paths += flow(`M${fmt(a.gx+a.gw)} ${a.dy+86} H${r-8} Q${r} ${a.dy+86} ${r} ${a.dy+94} V${b.dy+78} Q${r} ${b.dy+86} ${r-8} ${b.dy+86} H${fmt(b.gx+b.gw)}`,'decode');
+        labels += `<rect x="${fmt(w/2-82)}" y="554" width="164" height="24" rx="4" class="glyph-mask"/>`;
+        labels += text(w/2,571,'PP activations · A → B','minor');
+        labels += text(w/2,1148,'Next token → D1 / PP 1','minor');
+      }
+      svg.setAttribute('viewBox',`0 0 ${w} ${h}`);
+      svg.setAttribute('height',h);
+      svg.innerHTML=`<title>Illustrative DistServe GPU placement: PP 2 and TP 2</title><desc>Prefill instance P1 uses GPUs 0, 1, 4, and 5. Decode instance D1 uses GPUs 2, 3, 6, and 7. Both instances span two nodes. Pipeline activations travel between nodes, while corresponding stages transfer KV within each node.</desc><defs><filter id="dg-sketch" x="-2%" y="-2%" width="104%" height="104%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="4" result="noise"/><feDisplacementMap in="SourceGraphic" in2="noise" scale="1.5"/></filter>${marker('p','--viz-series-1')}${marker('d','--viz-series-2')}${marker('kv','--viz-series-3')}${marker('r','--muted-foreground')}</defs><g filter="url(#dg-sketch)">${layers}${paths}</g>${cards}${labels}`;
+      buttons.forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.mode===mode)));
+    }
+    buttons.forEach(button=>button.addEventListener('click',()=>{
+      mode=button.dataset.mode;
+      draw();
+    }));
+    new ResizeObserver(draw).observe(root);
+    draw();
+  })();
+  </script>
+</div>
+
+</body>
+</html>

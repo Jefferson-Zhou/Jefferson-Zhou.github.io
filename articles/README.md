@@ -32,6 +32,8 @@ Keep each language version as a separate HTML file so long-form article markup i
 
 For a technical article with tables, figures, margin notes, and numbered references, use `llm-inference-scheduling.html` (Chinese) and `llm-inference-scheduling-en.html` (English) as a complete paired example. Both translations retain the same first-publication and update dates, share image assets, and link back to one another.
 
+`prefill-decode-disaggregation.html` is a Chinese-only example with locally hosted research figures and an interactive `<iframe>` component. Its figure assets and standalone interactive page live together in `../assets/articles/prefill-decode-disaggregation/`. Keep the iframe source relative to the article page, and give it a descriptive title; shared responsive height rules live in `../styles.css`.
+
 For a Chinese-only article, mark `data-article-language="zh"` and set `data-language-url-en="../index.html"` so the language button returns to the English writing index without presenting Chinese text as an English translation. Label its English-index link “Chinese”; do not create a placeholder English article.
 
 ## Useful content blocks
