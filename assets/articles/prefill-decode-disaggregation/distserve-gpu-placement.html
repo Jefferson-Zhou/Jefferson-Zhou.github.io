@@ -55,6 +55,13 @@ body { margin:12px; background:var(--background); color:var(--foreground); }
     const root = document.getElementById('distserve-gpu-placement');
     const svg = root.querySelector('.gpu-canvas');
     const buttons = [...root.querySelectorAll('[data-mode]')];
+    if (new URLSearchParams(window.location.search).get('lang') === 'en') {
+      document.documentElement.lang = 'en';
+      root.querySelector('.viz-controls').setAttribute('aria-label', 'Select diagram phase');
+      root.querySelector('[data-mode="all"]').textContent = 'Overview';
+      root.querySelector('[data-mode="kv"]').textContent = '2 KV transfer';
+      svg.setAttribute('aria-label', 'Illustrative placement of Prefill instance P1 and Decode instance D1: two pipeline stages and two-way tensor parallelism, with KV transfer between corresponding stages within each node.');
+    }
     let mode = 'all';
     const active = t => mode === 'all' || mode === t;
     const fmt = n => Number(n.toFixed(2));

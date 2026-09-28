@@ -1,6 +1,6 @@
 # Figures and interactive diagram
 
-This directory contains the seven research illustrations used by `articles/prefill-decode-disaggregation.html`. The original PNG files are preserved; the article loads lossless WebP copies with the same pixel dimensions. Each visible figure caption attributes the relevant paper or presentation and links to its matching reference entry.
+This directory contains the seven research illustrations shared by `articles/prefill-decode-disaggregation.html` and `articles/prefill-decode-disaggregation-en.html`. The original PNG files are preserved; both articles load lossless WebP copies with the same pixel dimensions. Each visible figure caption attributes the relevant paper or presentation and links to its matching reference entry.
 
 | Files | Source |
 | --- | --- |
@@ -9,4 +9,4 @@ This directory contains the seven research illustrations used by `articles/prefi
 | `megatron-gtc2020-tp-pp` | Raul Puri, Megatron-LM, NVIDIA GTC 2020 |
 | `mooncake-fig2`, `mooncake-fig10` | Qin et al., Mooncake, FAST 2025 |
 
-`distserve-gpu-placement.html` is an interactive explanatory illustration of a DistServe-style GPU placement, not a reproduced paper figure. It is self-contained and uses no ChatGPT widget APIs. The article embeds it with a relative iframe URL; the shared stylesheet provides enough height for its stacked mobile layout.
+`distserve-gpu-placement.html` is an interactive explanatory illustration of a DistServe-style GPU placement, not a reproduced paper figure. It is self-contained and uses no ChatGPT widget APIs. Both articles embed it with a relative iframe URL; the English article adds `?lang=en` for English controls. The shared stylesheet provides enough height for its stacked mobile layout.
