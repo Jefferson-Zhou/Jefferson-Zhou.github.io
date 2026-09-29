@@ -106,6 +106,154 @@
     });
   });
 
+  // About page: one terminal, four scroll-driven CMD views.
+  if (page === 'about') {
+    let scrollFrame = 0;
+    const story = document.querySelector('#terminal-story');
+    const storySteps = [...document.querySelectorAll('.story-step[data-terminal-step]')];
+    const terminal = document.querySelector('.story-terminal');
+    const terminalOutput = document.querySelector('.story-terminal .terminal-output');
+    const terminalAnnouncement = document.querySelector('.terminal-announcement');
+    const terminalStepCount = document.querySelector('.terminal-step-count');
+    const terminalHint = document.querySelector('.terminal-hint');
+    const publicationLink = document.querySelector('.terminal-doi');
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const terminalScripts = {
+      en: [
+        ['$ cat research.txt', '> Heterogeneous LLM inference\n> Evidence-grounded knowledge systems\n> Efficient reasoning models'],
+        ['$ cat education.txt', '2023.09 — 2027.06\nFuzhou University\nMaynooth University'],
+        ['$ cat experience.txt', '2025.06 — present\nShanghai Jiao Tong University\n\n2026.03 — 2026.06\niFLYTEK\n\n2026.07 — 2026.09\nAnfang Gaoke Dianci Safety Technology'],
+        ['$ ls publications/', '2024 · Applied and Computational Engineering\nIntelligent Agent and NPC Behavior Modeling: From Traditional Methods to AI Driven Interactive Game Design\n\n2026 · IEEE TCCN · revised manuscript submitted\nREASONPRUNE: Interpreting and Preserving Reasoning Structures via Heterogeneity-Aware Global Pruning']
+      ],
+      zh: [
+        ['$ cat research.txt', '> 异构大模型推理\n> 有证据支撑的知识系统\n> 高效的推理模型'],
+        ['$ cat education.txt', '2023.09 — 2027.06\n福州大学\n爱尔兰梅努斯大学'],
+        ['$ cat experience.txt', '2025.06 — 至今\n上海交通大学\n\n2026.03 — 2026.06\n科大讯飞\n\n2026.07 — 2026.09\nAnfang Gaoke Dianci Safety Technology'],
+        ['$ ls publications/', '2024 · Applied and Computational Engineering\nIntelligent Agent and NPC Behavior Modeling: From Traditional Methods to AI Driven Interactive Game Design\n\n2026 · IEEE TCCN · 修改稿已提交\nREASONPRUNE: Interpreting and Preserving Reasoning Structures via Heterogeneity-Aware Global Pruning']
+      ]
+    };
+    let activeTerminalStep = -1;
+    let typingTimer = 0;
+
+    function renderTerminalStep(index) {
+      if (!terminalOutput) return;
+      window.clearTimeout(typingTimer);
+      activeTerminalStep = index;
+      const script = terminalScripts[language][index];
+      const fullText = `${script[0]}\n\n${script[1]}`;
+      storySteps.forEach((step, stepIndex) => step.classList.toggle('is-active', stepIndex === index));
+      if (terminalStepCount) terminalStepCount.textContent = `${String(index + 1).padStart(2, '0')} / ${String(storySteps.length).padStart(2, '0')}`;
+      if (terminalHint) terminalHint.hidden = index === 3;
+      if (publicationLink) publicationLink.hidden = index !== 3;
+      if (terminalAnnouncement) terminalAnnouncement.textContent = fullText;
+      if (reducedMotion.matches) {
+        terminalOutput.textContent = fullText;
+        return;
+      }
+      let length = 0;
+      terminalOutput.textContent = '';
+      function typeNext() {
+        length += 1;
+        terminalOutput.textContent = fullText.slice(0, length);
+        if (length < fullText.length) {
+          typingTimer = window.setTimeout(typeNext, fullText[length - 1] === '\n' ? 70 : 12);
+        }
+      }
+      typeNext();
+    }
+
+    function updateTerminalStory() {
+      if (!story || !terminalOutput || !storySteps.length) return;
+      const storyRect = story.getBoundingClientRect();
+      if (storyRect.top > window.innerHeight * 0.7 || storyRect.bottom < 72) return;
+      let nextStep = 0;
+      const checkpoint = window.innerWidth <= 920
+        ? Math.min(window.innerHeight * 0.72, terminal.getBoundingClientRect().bottom + 24)
+        : window.innerHeight * 0.46;
+      storySteps.forEach((step, index) => {
+        if (step.getBoundingClientRect().top <= checkpoint) nextStep = index;
+      });
+      if (nextStep !== activeTerminalStep) renderTerminalStep(nextStep);
+    }
+
+    function updateAboutScroll() {
+      scrollFrame = 0;
+      updateTerminalStory();
+    }
+    function scheduleAboutScroll() {
+      if (!scrollFrame) scrollFrame = requestAnimationFrame(updateAboutScroll);
+    }
+    window.addEventListener('scroll', scheduleAboutScroll, { passive: true });
+    window.addEventListener('resize', scheduleAboutScroll);
+    window.addEventListener('languagechange', () => {
+      if (activeTerminalStep >= 0) {
+        storySteps[activeTerminalStep].scrollIntoView({ block: 'center' });
+        renderTerminalStep(activeTerminalStep);
+      }
+      scheduleAboutScroll();
+    });
+    updateAboutScroll();
+  }
+
+  // Both language versions share one English citation for the English canonical page.
+  // The Chinese page supplies its exact English title in data-citation-en-title.
+  if (page === 'article') {
+    const articleContent = document.querySelector('.article-content');
+    const articleFooter = articleContent?.querySelector('.article-end');
+    const isChineseArticle = articleLanguage === 'zh' || document.querySelector('.article-page')?.lang.startsWith('zh');
+    const title = isChineseArticle
+      ? document.body.dataset.citationEnTitle
+      : document.querySelector('.article-header h1')?.textContent.trim();
+    const published = document.querySelector('.article-meta time[datetime]')?.getAttribute('datetime');
+    const englishPage = document.body.dataset.citationUrl ||
+      (isChineseArticle ? document.body.dataset.languageUrlEn : window.location.pathname);
+
+    if (articleContent && articleFooter && title && englishPage && published && /^\d{4}-\d{2}-\d{2}$/.test(published)) {
+      const [year, month] = published.split('-');
+      const date = new Date(`${published}T00:00:00Z`);
+      const readableDate = new Intl.DateTimeFormat('en-US', {
+        year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC'
+      }).format(date);
+      const monthName = new Intl.DateTimeFormat('en-US', { month: 'long', timeZone: 'UTC' }).format(date);
+      const canonicalPath = new URL(englishPage, window.location.href).pathname;
+      const canonicalUrl = new URL(canonicalPath, 'https://jefferson-zhou.github.io').href;
+      const slug = canonicalPath.split('/').pop().replace(/\.html$/, '').replace(/-en$/, '');
+      const keySuffix = slug.split(/[^a-z0-9]+/i).map((word, index) =>
+        index === 0 ? word.toLowerCase() : word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+      ).join('');
+      const bibKey = `zhou${year}${keySuffix}`;
+      const citationLead = `Zhou, Jefferson. “${title}.” Jefferson Zhou, ${readableDate}. `;
+      const bibtex = `@misc{${bibKey},\n  author = {Zhou, Jefferson},\n  title = {${title}},\n  year = {${year}},\n  month = {${monthName}},\n  url = {${canonicalUrl}}\n}`;
+
+      const section = document.createElement('section');
+      section.className = 'article-citation';
+      section.setAttribute('aria-labelledby', 'cite-this-article');
+      section.innerHTML = '<h2 id="cite-this-article" data-outline></h2><p></p><blockquote><p></p></blockquote><div class="article-citation-format"><span>BibTeX</span><button type="button"></button></div><pre><code></code></pre>';
+      section.querySelector('h2').textContent = 'Citation';
+      section.querySelector(':scope > p').textContent = 'If this article is useful, please cite it in the following format.';
+      const citationParagraph = section.querySelector('blockquote p');
+      citationParagraph.append(document.createTextNode(citationLead));
+      const citationLink = document.createElement('a');
+      citationLink.href = canonicalUrl;
+      citationLink.textContent = canonicalUrl;
+      citationParagraph.append(citationLink);
+      section.querySelector('code').textContent = bibtex;
+      const copyButton = section.querySelector('button');
+      copyButton.textContent = 'Copy BibTeX';
+      copyButton.setAttribute('aria-label', 'Copy the BibTeX citation');
+      copyButton.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(bibtex);
+          copyButton.textContent = 'Copied';
+          window.setTimeout(() => { copyButton.textContent = 'Copy BibTeX'; }, 1800);
+        } catch {
+          copyButton.textContent = 'Select to copy';
+        }
+      });
+      articleFooter.before(section);
+    }
+  }
+
   // Article pages: generated outline, active section, and reading progress.
   const outlineToggle = document.querySelector('#outline-toggle');
   const outlinePanel = document.querySelector('#outline-panel');
